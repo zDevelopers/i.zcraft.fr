@@ -1,2 +1,2 @@
 #!/bin/sh
-screen -dmS "Raccourciceur" sbcl --load start.lisp # --disable-debugger
+screen -dmS "Raccourcisseur" sbcl --load start.lisp
