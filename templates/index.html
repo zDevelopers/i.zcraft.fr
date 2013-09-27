@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Raccourcisseur</title>
+  <link rel="stylesheet" href="/static/css/main.css" type="text/css" media="screen, tv, print" charset="UTF-8" />
+</head>
+<body>
+  <table>
+    <tr>
+      <td>
+	<h2 style="margin-right: 50px;">Raccourcisseur d'url pour images</h2>
+	<form action="/dl" method="post">
+	  Url <input type="text" name="URL" />
+	  <input type="submit" value="Raccourcir" />
+	</form>
+      </td>
+      <td>
+	
+	<h2 style="margin-left: 50px;">Upload d'image</h2>
+	<form action="/up" method="post" enctype="multipart/form-data" style="margin-left: 50px;">
+	  Fichier <input type="file" name="URL" />
+	  <input type="submit" value="Envoyer"/>
+	</form>
+      </td>
+    </tr>
+  </table>
+
+<% @if lien %>
+
+
+
+<h2><a href="http://i.zcraft.fr/<% @var lien %>">http://i.zcraft.fr/<% @var lien %></a></h2>
+<img src="http://i.zcraft.fr/<% @var lien %>" style="max-width: 500px; max-height: 500px;"/>
+
+<% @endif %>
+</body>
+</html>
