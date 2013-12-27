@@ -18,6 +18,9 @@
   @ignore params
   (render "index.html" 
 	  (nconc params
+		 (redis:with-connection (:host "127.0.0.1")
+					(list :vues (red:incr "vues")))
+
 
 			(list :images
 			  (redis:with-connection (:host "127.0.0.1")

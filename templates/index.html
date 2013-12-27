@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="/static/css/main.css" type="text/css" media="screen, tv, print" charset="UTF-8" />
 </head>
 <body>
+
+
+  <% @if vues %>
+  <span style="font-size:11px; font-weight: normal; position: absolute; right: 5px; top: 5px;">Vu <% @var vues %> fois</span> <% @endif %>
+
   <table>
     <tr>
 <!--      <td>
@@ -18,7 +23,7 @@
       </td>-->
       <td>
 	
-	<h2 style="margin-left: 50px;">Upload d'image</h2>
+	<h2 style="margin-left: 50px;">Upload d'image</h2> 
 	<form action="/up" method="post" enctype="multipart/form-data" style="margin-left: 50px;">
 	  Fichier <input type="file" name="URL" />
 	  <input type="submit" value="Envoyer"/>
@@ -27,17 +32,20 @@
     </tr>
   </table>
 
-<% @if images %>
-<div id="last" style="width: 220px; position: absolute; left: 5px; top: 5px; text-align: center; border-right: solid black 2px; border-bottom: solid black 2px;">
-  <h4>Dernières images</h4>
-<% @loop images %>
+  <div id="last" style="width: 220px; position: absolute; left: 0px; top: 0px; text-align: center; border-right: solid black 2px; border-bottom: solid black 2px;">
+    <% @if images %>
 
-<a href="http://i.zcraft.fr/img/<% @var num %>"><img src="http://i.zcraft.fr/mini_<% @var nom %>" style="width: 100px;"/></a>
+    <h4>Dernières images</h4>
+    <% @loop images %>
 
-<% @endloop %>
-</div>
+    <a href="http://i.zcraft.fr/img/<% @var num %>"><img src="http://i.zcraft.fr/mini_<% @var nom %>" style="width: 100px;"/></a>
+
+    <% @endloop %>
+<% @else %>
+<a href="http://i.zcraft.fr/" style="color: black;">Accueil</a>
+
 <% @endif %>
-
+  </div>
 <% @if lien %>
 
 
