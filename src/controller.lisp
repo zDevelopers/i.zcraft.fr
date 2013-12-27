@@ -16,7 +16,15 @@
 @url GET "/"
 (defun index (params)
   @ignore params
-  (render "index.html"))
+  (render "index.html" 
+	  (nconc params
+
+			(list :images
+			  (redis:with-connection (:host "127.0.0.1")
+						 (loop for num in (red:lrange "last" 0 10)
+						       collect
+						       (list :num num :nom (concatenate 'string num (red:get num))))))
+		  )))
 
 @url POST "/dl"
 (defun dl (params)
@@ -37,7 +45,7 @@
 		   (multiple-value-bind (result status-code)
 					(drakma:http-request url)
 					
-					;; l'appel a fonctionne
+					;; l'appel a fonctionné
 					(if (= 200 status-code)
 					    (if (> (length result) 0)
 						(progn
@@ -46,7 +54,9 @@
 						      (progn
 							(loop for value across result
 							      do
-							      (write-byte value stream)))
+							      (write-byte value stream))
+							(last-list count)
+							(red:set count extension))
 						      (render "index.html" 
 							      (nconc params
 								     (list ':lien
@@ -57,6 +67,28 @@
 	      )))
       "L'url doit commencer par http")))
 
+
+@url GET "/img/:id"
+(defun img (params)
+  (print "Affichage d'une image")
+  (print params)
+  (print "")
+  (redis:with-connection (:host "127.0.0.1")
+			 (progn
+			   (render "index.html" 
+				   (nconc params
+					  (list
+					   ':tn
+					   (concatenate 'string "mini_" (getf params :id) (red:get (getf params :id)))
+					   ':lien
+					   (concatenate 'string (getf params :id) (red:get (getf params :id)))))))))
+
+
+; Liste circulaire avec les 10 dernières images
+(defun last-list (num)
+  (redis:with-connection (:host "127.0.0.1")
+			 (red:lpush "last" num)
+			 (red:ltrim "last" 0 10)))
 
 @url POST "/up"
 (defun up (params)
@@ -79,22 +111,25 @@
 		   (let ((dest (merge-pathnames 
 				(concatenate 'string "static/" (write-to-string count) extension) 
 				(truename ".")  )))
+		     (last-list count)
+		     (red:set count extension)
 		     (rename-file path dest)
 		     (if (probe-file dest)
 			 (sb-ext:run-program "/usr/bin/convert" (list
 								 (namestring dest)
-								 "-resize" "300x300" 
+								 "-resize" "300x300>" 
 								 (concatenate 'string
 									      "static/mini_"
 									      (write-to-string count) extension))))
-		     (progn
-		       (render "index.html" 
-			       (nconc params
-				      (list 
-				       ':tn
-				       (concatenate 'string "mini_" (write-to-string count) extension)
-				       ':lien
-				       (concatenate 'string (write-to-string count) extension)))))))))
+;		     (progn
+;		       (render "index.html" 
+;			       (nconc params
+;				      (list 
+;				       ':tn
+;				       (concatenate 'string "mini_" (write-to-string count) extension)
+;				       ':lien
+;				       (concatenate 'string (write-to-string count) extension)))))))))
+		     (caveman:redirect-to (concatenate 'string "/img/" (write-to-string count)))))))
 	    
 	    (progn
 	      (delete-file path)))

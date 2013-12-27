@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Raccourcisseur</title>
@@ -9,13 +9,13 @@
 <body>
   <table>
     <tr>
-      <td>
+<!--      <td>
 	<h2 style="margin-right: 50px;">Raccourcisseur d'url pour images</h2>
 	<form action="/dl" method="post">
 	  Url <input type="text" name="URL" />
 	  <input type="submit" value="Raccourcir" />
 	</form>
-      </td>
+      </td>-->
       <td>
 	
 	<h2 style="margin-left: 50px;">Upload d'image</h2>
@@ -26,6 +26,17 @@
       </td>
     </tr>
   </table>
+
+<% @if images %>
+<div id="last" style="width: 220px; position: absolute; left: 5px; top: 5px; text-align: center; border-right: solid black 2px; border-bottom: solid black 2px;">
+  <h4>Dernières images</h4>
+<% @loop images %>
+
+<a href="http://i.zcraft.fr/img/<% @var num %>"><img src="http://i.zcraft.fr/mini_<% @var nom %>" style="width: 100px;"/></a>
+
+<% @endloop %>
+</div>
+<% @endif %>
 
 <% @if lien %>
 
