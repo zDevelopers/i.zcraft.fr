@@ -38,7 +38,7 @@
   (builder
    (<clack-middleware-static>
     :path (lambda (path)
-            (when (ppcre:scan "^(?:/static/|/images/|/css/|/js/|/robot\\.txt$|/favicon.ico$)" path)
+            (when (ppcre:scan "^(?:/static/|/images/|/css/|/js/|/robot\\.txt$|/favicon.ico$|jpg$)" path)
               (ppcre:regex-replace "^/static" path "")))
     :root (merge-pathnames (config :static-path)
                            (config :application-root)))

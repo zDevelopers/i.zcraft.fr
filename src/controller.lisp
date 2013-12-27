@@ -80,11 +80,21 @@
 				(concatenate 'string "static/" (write-to-string count) extension) 
 				(truename ".")  )))
 		     (rename-file path dest)
+		     (if (probe-file dest)
+			 (sb-ext:run-program "/usr/bin/convert" (list
+								 (namestring dest)
+								 "-resize" "300x300" 
+								 (concatenate 'string
+									      "static/mini_"
+									      (write-to-string count) extension))))
 		     (progn
 		       (render "index.html" 
 			       (nconc params
-				      (list ':lien
-					    (concatenate 'string (write-to-string count) extension)))))))))
+				      (list 
+				       ':tn
+				       (concatenate 'string "mini_" (write-to-string count) extension)
+				       ':lien
+				       (concatenate 'string (write-to-string count) extension)))))))))
 	    
 	    (progn
 	      (delete-file path)))
