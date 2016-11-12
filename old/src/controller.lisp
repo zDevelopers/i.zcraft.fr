@@ -81,8 +81,10 @@
 			   (render "index.html" 
 				   (nconc params
 					  (list
+					   ':id
+					   (getf params :id)
 					   ':tn
-					   (concatenate 'string "mini_" (getf params :id) (red:get (getf params :id)))
+					   (concatenate 'string "mini_" (getf params :id) ".jpg")
 					   ':lien
 					   (concatenate 'string (getf params :id) (red:get (getf params :id)))))))))
 
@@ -118,12 +120,20 @@
 		     (red:set count extension)
 		     (rename-file path dest)
 		     (if (probe-file dest)
-			 (sb-ext:run-program "/usr/bin/convert" (list
-								 (namestring dest)
-								 "-resize" "300x300>" 
-								 (concatenate 'string
-									      "static/mini_"
-									      (write-to-string count) extension))))
+			 (progn
+			   (sb-ext:run-program "/usr/bin/convert" (list
+								   (namestring dest)
+								   "-resize" "300x300>" 
+								   (concatenate 'string
+										"static/mini_"
+										(write-to-string count) ".jpg")))
+			   (if (not (string-equal extension ".jpg"))
+			       (sb-ext:run-program "/usr/bin/convert" (list
+								       (namestring dest)
+								       "-resize" "300x300>" 
+								       (concatenate 'string
+										    "static/mini_"
+										    (write-to-string count) extension))))))
 ;		     (progn
 ;		       (render "index.html" 
 ;			       (nconc params

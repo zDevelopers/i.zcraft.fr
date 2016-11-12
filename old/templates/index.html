@@ -38,11 +38,21 @@
     <h4>Dernières images</h4>
     <% @loop images %>
 
-    <a href="http://i.zcraft.fr/img/<% @var num %>"><img src="http://i.zcraft.fr/mini_<% @var nom %>" style="width: 100px;"/></a>
+    <span style="width: 100px; vertical-align: middle; display: inline-block;" ><a href="http://i.zcraft.fr/img/<% @var num %>"><img src="http://i.zcraft.fr/mini_<% @var nom %>" style="max-width: 100px; max-height: 100px;"/></a></span>
 
     <% @endloop %>
 <% @else %>
+
+<% @if id %>
+<a href="/img/<%= (- (parse-integer (getf env :id)) 1) %>"><</a>
+<% @endif %>
+
+
 <a href="http://i.zcraft.fr/" style="color: black;">Accueil</a>
+<% @if id %>
+<a href="/img/<%= (+ (parse-integer (getf env :id)) 1) %>">></a>
+<% @endif %>
+
 
 <% @endif %>
   </div>
@@ -54,14 +64,17 @@
 <img src="/<% @var tn %>" />
 
 
-<h3>Code forum miniature</h3>
+<h3>Code forum miniature vignet avec lien taille réelle</h3>
 <pre>[url=http://i.zcraft.fr/<% @var lien %>][img]http://i.zcraft.fr/<% @var tn %>[/img][/url]</pre>
 
-<h3>Code forum image taile réelle</h3>
+<h3>Code forum image taille réelle</h3>
+<pre>[img]http://i.zcraft.fr/<% @var lien %>[/img]</pre>
+
+<h3>Code forum image miniature</h3>
 <pre>[img]http://i.zcraft.fr/<% @var tn %>[/img]</pre>
 
 <h3>Lien direct de l'image</h3>
-<pre>http://i.zcraft.fr/<% @var tn %></pre>
+<pre>http://i.zcraft.fr/<% @var lien %></pre>
 
 <% @endif %>
 
