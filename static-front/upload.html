@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" src="main.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <title>Hébergeur d'images !</title>
+</head>
+<body>
+    <h1><a href="https://www.zcraft.fr"><img src="logo.png" alt="Zcraft.fr" width="96" height="96"/></a> Téléversement d'images</h1>
+    <form action="/index.php" method="post" enctype="multipart/form-data">
+        <div id="file">
+            <p id="select_p"><em>Glissez-déposez</em> ou <em>cliquez</em> pour sélectionner une image</p>
+            <input type="file" name="image" accept="image/*" />
+        </div>
+        <input type="checkbox" id="exif" name="exif" checked /><label for="exif">Supprimer les données personnelles de l'image <em class="description">Supprime les méta-données EXIF des images (informations de géolocalisation, sur l'appareil photo…)</em></label>
+        <input type="submit" value="Envoyer" />
+    </form>
+</body>
+</html>
