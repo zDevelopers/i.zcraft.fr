@@ -58,8 +58,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     validFileSize = selectedFile.size <= 5242880;
                     validFileType = selectedFile.type.startsWith("image/");
                     
-                    fileTypeInfo.innerHTML = "<strong>Type </strong><span>" + (selectedFile.type || "Inconnu");
-                    fileSizeInfo.innerHTML = "<strong>Taille </strong><span>" + beautifySize(selectedFile.size);
+                    fileTypeInfo.innerHTML = "Fichier <code>" + (selectedFile.type || "Inconnu");
+                    fileSizeInfo.innerHTML = beautifySize(selectedFile.size);
                     
                     fileTypeInfo.className = validFileType ? "" : "invalid";
                     fileSizeInfo.className = validFileSize ? "" : "invalid";
@@ -100,6 +100,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     function setupClipboardActions() {
-        
+        var linkblocks = document.getElementsByClassName("linkblock");
+        for(var i = 0; i < linkblocks.length; ++i) {
+            var button = linkblocks[i].appendChild(document.createElement("button"));
+            button.textContent = "C";
+        };
     }
 });
