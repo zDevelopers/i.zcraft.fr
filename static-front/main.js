@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var infoParagraph = makeInfoParagraph();
         var validFileType = false;
         var validFileSize = false;
-        var dragEndTimer;
+        var dragStatus = 0;
         
         if(!(fileLabel && fileInput && selectParagraph && submitInput && deletionSelect && deletionCheckbox)) return;
         
@@ -22,26 +22,24 @@ document.addEventListener("DOMContentLoaded", function() {
         function preventDrop(e) {
             if(e.target === fileInput) return;
             e.dataTransfer.dropEffect = 'none';
-            e.preventDefault();
         }
-
-        function dragStart() {
+        function dragStart(e) {
+            ++dragStatus;
             document.body.classList.add('dragging');
-
-            if (dragEndTimer) window.clearTimeout(dragEndTimer);
-            dragEndTimer = setTimeout(dragStop, 300);
         }
 
-        function dragStop() {
-            document.body.classList.remove('dragging');
-            if (dragEndTimer) window.clearTimeout(dragEndTimer);
+        function dragStop(e) {
+            --dragStatus;
+            if(dragStatus == 0) {
+                document.body.classList.remove('dragging');
+            }
         }
 
         document.documentElement.addEventListener("dragenter", preventDrop);
         document.documentElement.addEventListener("dragover", preventDrop);
 
-        document.documentElement.addEventListener("dragover", dragStart);
-        document.documentElement.addEventListener("dragend", dragStop);
+        document.documentElement.addEventListener("dragenter", dragStart);
+        document.documentElement.addEventListener("dragleave", dragStop);
         fileInput.addEventListener("change", dragStop);
         
 

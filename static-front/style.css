@@ -192,7 +192,7 @@ form > * {
     justify-content: center;
     
     border: dashed 2px transparent;
-    border-bottom: 1px #ccc solid;
+    border-bottom: 2px #ccc solid;
     border-radius: 0;
     cursor: pointer;
     text-align: center;
