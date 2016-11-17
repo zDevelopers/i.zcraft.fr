@@ -1,21 +1,19 @@
 document.addEventListener("DOMContentLoaded", function() {
     'use strict';
 
-    setupClipboardActions();
-    setupFileUpload();
-    setupDeletionOption();
-    
-    function setupFileUpload() {
+    (function setupFileUpload() {
         var fileLabel = document.getElementById("file");
         var fileInput = document.querySelector('#file input[type="file"]');
         var submitInput = document.querySelector('input[type="submit"]');
         var selectParagraph = document.getElementById("select_p");
+        var deletionSelect = document.getElementById("expires_after");
+        var deletionCheckbox = document.getElementById("expires");
         var infoParagraph = makeInfoParagraph();
         var validFileType = false;
         var validFileSize = false;
         var dragEndTimer;
         
-        if(!(fileLabel && fileInput && selectParagraph && submitInput)) return;
+        if(!(fileLabel && fileInput && selectParagraph && submitInput && deletionSelect && deletionCheckbox)) return;
         
         document.body.className = "js";
         fileInput.addEventListener("change", updateForm);
@@ -45,6 +43,11 @@ document.addEventListener("DOMContentLoaded", function() {
         document.documentElement.addEventListener("dragover", dragStart);
         document.documentElement.addEventListener("dragend", dragStop);
         fileInput.addEventListener("change", dragStop);
+        
+
+        deletionSelect.addEventListener("change", function(e) {
+            deletionCheckbox.checked = true;
+        });
 
         function updateForm() {
             if(fileInput.files && fileInput.files[0]) {
@@ -118,22 +121,47 @@ document.addEventListener("DOMContentLoaded", function() {
             
             return size.toFixed(1) + ' ' + units[currentUnit];
         }
-    }
+    })();
     
-    function setupClipboardActions() {
+    (function setupClipboardActions() {
         var linkblocks = document.getElementsByClassName("linkblock");
         for(var i = 0; i < linkblocks.length; ++i) {
+            var linkblock = linkblocks[i];
             var button = linkblocks[i].appendChild(document.createElement("button"));
             button.textContent = "C";
+            //button.setAttribute("data-tooltip", "Copié !");
+                    
+            
+            button.addEventListener("click", function(button) {
+                var copyBuffer = document.body.appendChild(document.createElement("textarea"));
+                var button = button.target;
+                copyBuffer.className = "copy-buffer";
+                copyBuffer.value = button.previousSibling.textContent;
+                copyBuffer.select();
+                try
+                {
+                    if(!document.execCommand("copy")) {
+                        console.error("Copy failed.");
+                        button.setAttribute("data-tooltip", "Erreur lors de la copie");
+                    }
+                    else {
+                        button.setAttribute("data-tooltip", "Copié !");
+                    }
+                } 
+                catch(e)
+                {
+                    console.error("Error while executing copy command: %o", e);
+                    button.setAttribute("data-tooltip", "Erreur lors de la copie");
+                }
+                
+                button.className = "tooltip-visible";
+                if(button.timeoutId) clearTimeout(button.timeoutId);
+                button.timeoutId = setTimeout(function() {
+                    button.className = "";
+                }, 2000);
+                
+                document.body.removeChild(copyBuffer);
+            });
         };
-    }
-
-    function setupDeletionOption() {
-        var deletionSelect = document.getElementById("expires_after");
-        var deletionCheckbox = document.getElementById("expires");
-
-        deletionSelect.addEventListener("change", function(e) {
-            deletionCheckbox.checked = true;
-        });
-    }
+    })();
 });

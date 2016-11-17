@@ -102,7 +102,6 @@ h2 {
     border: solid 1px #3f9718;
     border-radius: 7px;
     margin: .5em;
-    overflow: hidden;
     align-items: center;
     box-shadow: 0 0 5px rgba(0,0,0,.1) inset, 0 0 5px rgba(0,0,0,.1), 2px 2px 3px rgba(0,0,0,.1);
 }
@@ -126,6 +125,7 @@ h2 {
 }
 
 .linkblock button {
+    position: relative;
     font-family: 'izcraft';
     margin-left: auto;
     align-self: stretch;
@@ -138,12 +138,42 @@ h2 {
     border-left: solid 2px transparent;
     background: #3f9718;
     color: white;
+    border-radius: 0 5px 5px 0;
 }
 
 .linkblock button:hover {
     border-color: #3f9718;
     background: white;
     color: #3f9718;
+}
+
+.linkblock button:active {
+    outline: none;
+}
+
+.linkblock button:before {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    content: attr(data-tooltip);
+    display: block;
+    position: absolute;
+    white-space: nowrap;
+    top: -1em;
+    opacity: 0;
+    visibility: hidden;
+    left: -1em;
+    color: black;
+    z-index: 100;
+    border: solid 1px #3f9718;
+    padding: .3em;
+    border-radius: 7px;
+    box-shadow: 0 0 5px rgba(0,0,0,.1), 3px 3px 3px rgba(0,0,0,.1); 
+    transition: all .3s ease-in-out; 
+}
+
+.linkblock button.tooltip-visible:before {
+    top: -2.5em;
+    visibility: visible;
+    opacity: 1;
 }
 
 form > * {
