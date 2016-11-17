@@ -184,7 +184,7 @@ form > * {
 
 #file #info_p ul li {
     width: 100%;
-    color: #666;
+    color: #555;
 }
 
 #file #info_p ul li code {
@@ -200,8 +200,7 @@ form > * {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    color: #3f9718;
-    font-weight: bold;
+    color: #2a640f;
     font-size: 1.4em;
 }
 
@@ -228,12 +227,15 @@ form > * {
     width: 100%;
     
     font-size: .8em;
-    color: #666;
+    color: #888;
 }
 
 #file #info_p > p em {
-    font-weight: bold;
     font-style: normal;
+}
+
+#file #info_p.invalid > p em {
+    font-weight: bold;
     color: #2a640f;
 }
 
@@ -283,7 +285,7 @@ input[type="checkbox"] + label:before {
     text-align: center;
     display: inline-block;
     content: "✔";
-    font-size: 32px;
+    font-size: 24px;
     width: 1em;
     float: left;
     height: 1em;
@@ -291,7 +293,6 @@ input[type="checkbox"] + label:before {
     border: solid 1px #2a640f;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0,0,0,0.2) inset, 0 0 3px rgba(0,0,0,.1), 1px 1px 2px rgba(0,0,0,.2);
-    vertical-align: middle;
     margin-right: .5em;
     color: rgba(42,100,15,0);
     transition: all .1s ease-in-out; 
