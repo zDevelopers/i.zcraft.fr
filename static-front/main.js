@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var infoParagraph = makeInfoParagraph();
         var validFileType = false;
         var validFileSize = false;
+        var dragEndTimer;
         
         if(!(fileLabel && fileInput && selectParagraph && submitInput)) return;
         
@@ -22,10 +23,26 @@ document.addEventListener("DOMContentLoaded", function() {
             e.dataTransfer.dropEffect = 'none';
             e.preventDefault();
         }
-        
+
+        function dragStart() {
+            document.body.classList.add('dragging');
+
+            if (dragEndTimer) window.clearTimeout(dragEndTimer);
+            dragEndTimer = setTimeout(dragStop, 300);
+        }
+
+        function dragStop() {
+            document.body.classList.remove('dragging');
+            if (dragEndTimer) window.clearTimeout(dragEndTimer);
+        }
+
         document.documentElement.addEventListener("dragenter", preventDrop);
         document.documentElement.addEventListener("dragover", preventDrop);
-        
+
+        document.documentElement.addEventListener("dragover", dragStart);
+        document.documentElement.addEventListener("dragend", dragStop);
+        fileInput.addEventListener("change", dragStop);
+
         function updateForm() {
             if(fileInput.files && fileInput.files[0]) {
                 if(selectParagraph.parentNode) {
