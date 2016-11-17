@@ -122,13 +122,27 @@ document.addEventListener("DOMContentLoaded", function() {
     })();
     
     (function setupClipboardActions() {
+        function selectText(element) {
+            var doc = document, range, selection;
+
+            if (doc.body.createTextRange) {
+                range = document.body.createTextRange();
+                range.moveToElementText(element);
+                range.select();
+            } else if (window.getSelection) {
+                selection = window.getSelection();
+                range = document.createRange();
+                range.selectNodeContents(element);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+
         var linkblocks = document.getElementsByClassName("linkblock");
         for(var i = 0; i < linkblocks.length; ++i) {
             var linkblock = linkblocks[i];
             var button = linkblocks[i].appendChild(document.createElement("button"));
             button.textContent = "C";
-            //button.setAttribute("data-tooltip", "Copié !");
-                    
             
             button.addEventListener("click", function(button) {
                 var copyBuffer = document.body.appendChild(document.createElement("textarea"));
@@ -159,6 +173,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 }, 2000);
                 
                 document.body.removeChild(copyBuffer);
+            });
+
+
+            linkblock.firstElementChild.addEventListener("click", function(e) {
+                selectText(e.target);
             });
         };
     })();

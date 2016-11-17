@@ -106,18 +106,30 @@ h2 {
     box-shadow: 0 0 5px rgba(0,0,0,.1) inset, 0 0 5px rgba(0,0,0,.1), 2px 2px 3px rgba(0,0,0,.1);
 }
 
-.linkblock a, .linkblock pre {
+.linkblock p, .linkblock pre {
     display: block;
+    width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
     padding: .5em .5em .5em 1em;
     font-size: 1rem;
-    text-decoration: none;
+    font-family: monospace;
+    color: #222;
+}
+
+.linkblock pre::-webkit-scrollbar, .linkblock pre::scrollbar {
+    width: 10px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.linkblock pre::-webkit-scrollbar-thumb, .linkblock pre::scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .linkblock a {
-    color: #3f9718;
+    color: #222;
+    text-decoration: none;
 }
 
 .linkblock a:hover {
@@ -359,7 +371,7 @@ select {
     vertical-align: middle;
 
     position: relative;
-    bottom: 2px;
+    bottom: 1px;
 }
 
 input[type="submit"] {
@@ -396,4 +408,3 @@ input[type="submit"].invalid {
     font-weight: bold;
     color: red;
 }
-
