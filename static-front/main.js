@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     fileTypeInfo.className = validFileType ? "" : "invalid";
                     fileSizeInfo.className = validFileSize ? "" : "invalid";
                     submitInput.className = (validFileSize && validFileType) ? "" : "invalid";
+                    infoParagraph.className = (validFileSize && validFileType) ? "" : "invalid";
                     submitInput.disabled = !(validFileSize && validFileType);
                     
                     if(validFileType) {
