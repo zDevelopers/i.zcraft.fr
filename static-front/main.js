@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
+    'use strict';
+
     setupClipboardActions();
     setupFileUpload();
+    setupDeletionOption();
     
     function setupFileUpload() {
         var fileLabel = document.getElementById("file");
@@ -123,5 +126,14 @@ document.addEventListener("DOMContentLoaded", function() {
             var button = linkblocks[i].appendChild(document.createElement("button"));
             button.textContent = "C";
         };
+    }
+
+    function setupDeletionOption() {
+        var deletionSelect = document.getElementById("expires_after");
+        var deletionCheckbox = document.getElementById("expires");
+
+        deletionSelect.addEventListener("change", function(e) {
+            deletionCheckbox.checked = true;
+        });
     }
 });
