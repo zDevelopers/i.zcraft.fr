@@ -144,6 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var linkblock = linkblocks[i];
             var button = linkblocks[i].appendChild(document.createElement("button"));
             button.textContent = "C";
+            button.title = "Copier dans le presse-papiers";
             
             button.addEventListener("click", function(button) {
                 var copyBuffer = document.body.appendChild(document.createElement("textarea"));
