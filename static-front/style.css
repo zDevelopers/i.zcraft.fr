@@ -17,24 +17,25 @@
 
 html {
     display: flex;
-    align-items: center;
-    justify-content: center;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1.2em;
     color: #222;
-    height: 100%;
     width: 100%;
+    max-height: 500%;
+    height: 100%;
     z-index: 0;
     text-align: center;
 }
 
 body {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     border: solid 1px #2a640f;
     box-shadow: 0 0 15px rgba(0,0,0,.3), 3px 3px 3px rgba(0,0,0,.2); 
-    max-width: 98%;
-    height: auto;
-    width: 40em;
+    max-width: 100%;
+    min-height: 90%;
+    margin:auto;
+    width: 800px;
     text-align: left;
 }
 
@@ -55,6 +56,7 @@ h1 a {
     top: -24px;
     left: -24px;
     z-index: 142;
+    transition: all .2s ease-in-out; 
 }
 
 h1 img {
@@ -62,8 +64,10 @@ h1 img {
     position: relative;
     font-size: medium;
     height: 96px;
+    width: auto;
     vertical-align: middle;
     padding: 12px;
+    transition: all .2s ease-in-out; 
 }
 
 h1 a:before {
@@ -87,9 +91,9 @@ h1 a:hover:before {
     top: 2px;
     left: 2px;
     
-    transform: rotate(-25deg);
     border-color: rgba(63,151,24,1);
 }
+
 
 h2 {
     font-size: 1.2em;
@@ -116,6 +120,7 @@ h2 {
     font-size: 1rem;
     font-family: monospace;
     color: #222;
+    cursor: cell;
 }
 
 .linkblock pre::-webkit-scrollbar, .linkblock pre::scrollbar {
@@ -189,6 +194,12 @@ h2 {
     opacity: 1;
 }
 
+form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
 form > * {
     display: block;
 }
@@ -196,11 +207,9 @@ form > * {
 #file {
     display: flex;
     position: relative;
-    height: 50vh;
     margin: 1em;
-    margin-bottom: 0;
     padding-bottom: 1em;
-    
+    flex: 2;
     align-items: center;
     justify-content: center;
     
@@ -220,6 +229,7 @@ body.dragging #file {
 
 #file #info_p {
     display: flex;
+    position: relative;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -255,16 +265,35 @@ body.dragging #file {
     font-size: 1.4em;
 }
 
-#file #info_p img {
+#file #info_p figure {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
     position: relative;
-    width: auto;
-    max-width: 80%;
-    max-height: 100%;
-    display: block;
-    border: solid 1px #2a640f;
+    width: 80%;
+    height: 100%;
+    min-height: 75px;
+    flex: 1;
     margin: 15px;
+    align-items: flex-end;
+    justify-content: space-around;
+}
+
+#file #info_p figure img {
+    position: absolute;
+    overflow: hidden;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    max-height: 100%;
+    max-width: 100%;
+    border: solid 1px #2a640f;
     border-radius: 11px;
-    box-shadow: 0 0 15px rgba(0,0,0,.3), 3px 3px 3px rgba(0,0,0,.2); 
+    box-shadow: 0 0 15px rgba(0,0,0,.3), 3px 3px 3px rgba(0,0,0,.2);
+    background: #2a640f;
 }
 
 #file #info_p img:not([src]) {
@@ -328,7 +357,7 @@ input[type="checkbox"] {
 
 input[type="checkbox"] + label {
     cursor: pointer;
-    margin: 1.5em 3%;
+    margin: .5em 3%;
 }
 
 input[type="checkbox"] + label:before {
@@ -382,7 +411,7 @@ input[type="submit"] {
     background: #3f9718;
     border-radius: 5px;
     padding: .2em .7em;
-    margin: 1% 5%;
+    margin: .5em 5%;
     box-shadow: 0 0 3px rgba(0,50,0,.8);
     color: white;
     font-size: 1.1em;
@@ -409,3 +438,71 @@ input[type="submit"].invalid {
     font-weight: bold;
     color: red;
 }
+
+@media (max-width: 800px), (max-height: 600px) {
+    html {
+        font-size: 1em;
+    }
+    body {
+        margin: 0;
+        box-shadow: none;
+        border: 0;
+        width: 100%;
+    }
+    h1 {
+        padding-left: 64px;
+        letter-spacing: 0;
+        position: relative;
+    }
+    h1 a {
+        z-index: 142;
+        top: 50%; left: .25em;
+        margin-top: -24px;
+    }
+
+    h1 img {
+        display: block;
+        position: relative;
+        font-size: medium;
+        height: 48px;
+        vertical-align: middle;
+        padding: 0;
+    }
+
+    h1 a:before {
+        content: "";
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        top: -2px;
+        left: -2px;
+        
+        background: white;
+        transform: rotate(-25deg);
+        box-shadow: 0 0 5px rgba(0,0,0,.4);
+        border: solid 1px rgba(63,151,24,0);
+    }
+    
+    h1 a:hover:before {
+        width: 60px;
+        height: 60px;
+        top: -8px;
+        left: -8px;
+        
+        transform: rotate(-25deg);
+        border-color: rgba(63,151,24,1);
+        transition: all .2s ease-in-out; 
+    }
+    
+    h2 {
+        margin: .5em 1em 0 1em;
+        font-size: 1.1em;
+    }
+    
+    #file {
+        margin: .25em;
+        margin-bottom: 0;
+        padding-bottom: .25em;
+    }
+}
+

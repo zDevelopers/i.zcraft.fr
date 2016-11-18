@@ -62,7 +62,8 @@ document.addEventListener("DOMContentLoaded", function() {
         function makeInfoParagraph() {
             var infoParagraph = document.createElement("p");
             
-            var previewImage = infoParagraph.appendChild(document.createElement("img"));
+            var previewContainer = infoParagraph.appendChild(document.createElement("figure"));
+            var previewImage = previewContainer.appendChild(document.createElement("img"));
             var infoList = infoParagraph.appendChild(document.createElement("ul"));
             var fileNameInfo = infoList.appendChild(document.createElement("li"));
             var fileTypeInfo = infoList.appendChild(document.createElement("li"));
