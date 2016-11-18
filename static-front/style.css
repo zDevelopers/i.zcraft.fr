@@ -33,10 +33,13 @@ body {
     border: solid 1px #2a640f;
     box-shadow: 0 0 15px rgba(0,0,0,.3), 3px 3px 3px rgba(0,0,0,.2); 
     max-width: 100%;
-    min-height: 90%;
     margin:auto;
     width: 800px;
     text-align: left;
+}
+
+body#upload_page {
+    min-height: 90%;
 }
 
 h1 {
