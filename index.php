@@ -34,7 +34,7 @@ if(!empty($_FILES)) {
 				echo "<h2>Lien direct</h2> <a href=\"https://i.zcraft.fr/$nom\">https://i.zcraft.fr/$nom</a>";
 				echo "<h2>Lien direct miniature</h2> <a href=\"https://i.zcraft.fr/mini_$nom\">https://i.zcraft.fr/mini_$nom</a>";
 				echo "<h2>Lien forum avec miniature</h2> <pre>[url=https://i.zcraft.fr/$nom][img]https://i.zcraft.fr/mini_$nom"."[/img][/url]</pre>";
-                                echo "<h2>Lien forum avec miniature, centré</h2> <pre>[center][url=httsp://i.zcraft.fr/$nom][img]https://i.zcraft.fr/mini_$nom"."[/img][/url][/center]</pre>";
+                                echo "<h2>Lien forum avec miniature, centré</h2> <pre>[center][url=https://i.zcraft.fr/$nom][img]https://i.zcraft.fr/mini_$nom"."[/img][/url][/center]</pre>";
 			} else { echo "échec"; }
 		}
 		else {
