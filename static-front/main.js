@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 var copyBuffer = document.body.appendChild(document.createElement("textarea"));
                 var button = button.target;
                 copyBuffer.className = "copy-buffer";
-                copyBuffer.value = button.previousSibling.textContent;
+                copyBuffer.value = button.previousElementSibling.textContent;
                 copyBuffer.select();
                 try
                 {
