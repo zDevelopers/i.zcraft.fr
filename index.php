@@ -30,44 +30,13 @@ $app['config'] =
 
 // App bootstrap ----------------------------------------------
 
+require_once 'utils.php';
+
 $app->register(new Silex\Provider\TwigServiceProvider(), [
     'twig.path' => __DIR__.'/templates',
 ]);
 
-/**
- * Loads the saved data (here, an array).
- * In the file, data is serialized,compressed and encoded in base64.
- */
-function load_db()
-{
-    global $app; // TODO improve (service?)
-    $data_file = $app['config']['data_file'];
-
-    if (!is_file($data_file))
-    {
-        return [];
-    }
-    else
-    {
-        return unserialize(gzinflate(base64_decode(substr(file_get_contents($data_file), 8))));
-    }
-}
-
-/**
- * Saves the data in a file.
- * Returns the success of the operation.
- */
-function save_db($data)
-{
-    global $app;
-    return file_put_contents($app['config']['data_file'], '<?php //' . base64_encode(gzdeflate(serialize($data))));
-}
-
-
-if (file_exists('config.php'))
-{
-    $app['config'] = array_merge($app['config'], include('config.php'));
-}
+if (file_exists('config.php')) $app['config'] = array_merge($app['config'], include('config.php'));
 
 
 
@@ -110,7 +79,6 @@ $app->post('/', function(Request $request) use($app)
     $mini_name = 'mini_' . $storage_name;
     $mini_path = $app['config']['storage_dir'] . '/' . $storage_path . $mini_name;
     $mini_uri  = $base_uri . $mini_name;
-
     $thmb_size = $app['config']['thumb_size'];
 
     $resized = false;
@@ -120,60 +88,9 @@ $app->post('/', function(Request $request) use($app)
         system('convert ' . $full_storage_path . ' -resize \'' . $thmb_size . 'x' . $thmb_size . '>\' ' . $mini_path);
         $resized = true;
     }
-
-    // Fallback to GD to generate thump without convert
     else if (in_array($mime_type, ['image/png', 'image/jpeg', 'image/gif']))
     {
-        list($original_width, $original_height, $original_type) = getimagesize($full_storage_path);
-
-        if ($original_width > $original_height)
-        {
-            $new_width  = $thmb_size;
-            $new_height = intval($original_height * $new_width / $original_width);
-        }
-        else
-        {
-            $new_height = $thmb_size;
-            $new_width  = intval($original_width * $new_height / $original_height);
-        }
-
-        $dest_x = intval(($thmb_size - $new_width) / 2);
-        $dest_y = intval(($thmb_size - $new_height) / 2);
-
-        if ($original_type === 1)
-        {
-            $image_save_function   = "ImageGIF";
-            $image_create_function = "ImageCreateFromGIF";
-        }
-        else if ($original_type === 2)
-        {
-            $image_save_function   = "ImageJPEG";
-            $image_create_function = "ImageCreateFromJPEG";
-        }
-        else if ($original_type === 3)
-        {
-            $image_save_function   = "ImagePNG";
-            $image_create_function = "ImageCreateFromPNG";
-        }
-
-        if ($image_save_function)
-        {
-            $old_image = $image_create_function($full_storage_path);
-            $new_image = imagecreatetruecolor($thmb_size, $thmb_size);
-
-            // apply transparent background only if is a png image
-            if($original_type === 3)
-            {
-                imagesavealpha($new_image, TRUE);
-                $color = imagecolorallocatealpha($new_image, 0, 0, 0, 127);
-                imagefill($new_image, 0, 0, $color);
-            }
-
-            imagecopyresampled($new_image, $old_image, $dest_x, $dest_y, 0, 0, $new_width, $new_height, $original_width, $original_height);
-            $image_save_function($new_image, $mini_path);
-
-            $resized = true;
-        }
+        $resized = make_thumbnail($full_storage_path, $mini_path, $thmb_size);
     }
 
     // We cannot create a thumbnail :(
@@ -181,6 +98,9 @@ $app->post('/', function(Request $request) use($app)
     {
         copy($full_storage_path, $mini_path);
     }
+
+
+    // User view
 
     return $app['twig']->render('links.html.twig',
     [
