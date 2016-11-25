@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="{{ global.request.basepath }}/assets/style.css" rel="stylesheet" />
+
+    <title>{% block document_title %}Hébergeur d'images !{% endblock %}</title>
+</head>
+
+<body {% block body_attributes %}{% endblock %}>
+    <h1>
+    	<a href="{% block head_link %}{{ global.request.uri }}{% endblock %}">
+    		<img src="{{ global.request.basepath }}/assets/logo.png" alt="Zcraft.fr" width="96" height="96"/>
+    	</a>
+    	{% block page_title %}Hébergeur d'images{% endblock %}
+    </h1>
+
+    {% block content %}{% endblock %}
+
+    <script type="text/javascript" src="{{ global.request.basepath }}/assets/main.js"></script>
+
+</body>
+</html>

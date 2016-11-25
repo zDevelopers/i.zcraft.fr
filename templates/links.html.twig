@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body_attributes %}id="links_page"{% endblock %}
+
+{% block content %}
+<h2>Lien direct</h2>
+<div class="linkblock">
+    <p><a href="{{ full_url }}">{{ full_url }}</a></p>
+</div>
+
+<h2>Lien direct, en miniature</h2>
+<div class="linkblock">
+    <p><a href="{{ mini_url }}">{{ mini_url }}</a></p>
+</div>
+
+<h2>Lien forum avec miniature</h2>
+<div class="linkblock">
+    <pre>[url={{ full_url }}][img]{{ mini_url }}[/img][/url]</pre>
+</div>
+
+<h2>Lien forum avec miniature, centré</h2>
+<div class="linkblock">
+    <pre>[center][url={{ full_url }}][img]{{ mini_url }}[/img][/url][/center]</pre>
+</div>
+
+<h2 class="linkdelete-title">Lien de suppression</h2>
+<div class="linkblock linkdelete">
+    <pre>{{ delete_url }}</pre>
+</div>
+{% endblock %}
