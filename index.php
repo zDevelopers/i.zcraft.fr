@@ -46,14 +46,12 @@ if (file_exists('config.php')) $app['config'] = array_merge($app['config'], incl
 $app->get('/', function () use ($app)
 {
     return $app['twig']->render('index.html.twig');
-})->bind('home');
+})
+->bind('home');
 
 
 $app->post('/', function (Request $request) use ($app)
 {
-    /**
-     * @var \Symfony\Component\HttpFoundation\File\File
-     */
     $file = $request->files->get('image');
     $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
 
@@ -104,28 +102,33 @@ $app->post('/', function (Request $request) use ($app)
     }
 
 
-    // Saves deletion token and expiration
+    // Data aggregation
 
     $deletion_token = random_string(32);
     $expiration_date = $request->request->has('expires') ? time() + intval($request->request->get('expires_after')) : -1;
 
-    $data = load_db();
-    if (!is_array($data['images'])) $data['images'] = [];
-
-    $data['images'][] = [
-        'original_name' => $file->getFilename(),
-        'storage_name' => $storage_name,
-        'storage_path' => $full_storage_path,
+    $image_data = [
+        'original_name'     => $file->getClientOriginalName(),
+        'storage_name'      => $storage_name,
+        'storage_path'      => $full_storage_path,
         'storage_path_mini' => $mini_path,
-        'url' => $file_uri,
-        'url_mini' => $mini_uri,
-        'uploaded_at' => time(),
-        'uploaded_by' => $request->getClientIp(),
-        'deletion_token' => $deletion_token,
-        'expires_at' => $expiration_date
+        'url'               => $file_uri,
+        'url_mini'          => $mini_uri,
+        'uploaded_at'       => time(),
+        'uploaded_by'       => $request->getClientIp(),
+        'deletion_token'    => $deletion_token,
+        'expires_at'        => $expiration_date
     ];
 
-    save_db($data);
+
+    // Saves deletion token and expiration
+
+    $db = load_db();
+    if (!is_array($db['images'])) $db['images'] = [];
+
+    $db['images'][] = $image_data;
+
+    save_db($db);
 
 
     // User view
@@ -135,15 +138,47 @@ $app->post('/', function (Request $request) use ($app)
         'full_url' => $file_uri,
         'mini_url' => $mini_uri,
         'delete_url' => $app['url_generator']->generate('delete', ['token' => $deletion_token], UrlGeneratorInterface::ABSOLUTE_URL),
-        'deletion_token' => $deletion_token
+        'deletion_token' => $deletion_token,
+        'image' => $image_data
     ]);
-})->bind('upload');
+})
+->bind('upload');
 
 
-$app->get('/delete/{token}', function ($token)
+$app->get('/delete/{token}', function ($token) use ($app)
 {
+    $db = load_db();
+    $image = null;
 
-})->bind('delete');
+    if (is_array($db['images']))
+    {
+        $len = count($db['images']);
+        for ($i = 0; $i < $len; $i++)
+        {
+            if ($db['images'][$i]['deletion_token'] != $token || $db['images'][$i]['deleted']) continue;
+
+            $image = $db['images'][$i];
+
+            unlink(__DIR__ . '/' . $image['storage_path']);
+            unlink(__DIR__ . '/' . $image['storage_path_mini']);
+
+            $image['deleted'] = true;
+            $db['images'][$i] = $image;
+
+            break;
+        }
+    }
+
+    save_db($db);
+
+    return new Response($app['twig']->render('deleted.html.twig',
+    [
+        'deleted' => $image != null,
+        'image' => $image
+    ]), $image != null ? 200 : 404);
+})
+->bind('delete');
+
 
 /**
  * Debug tool
@@ -179,6 +214,5 @@ $app->error(function (\Exception $e, Request $request, $code) use ($app)
     return $app['twig']->render($template . '.html.twig', ['code' => $code]);
 });
 
-
-$app['debug'] = true;
+$app['debug'] = in_array($_SERVER['SERVER_NAME'], array('0.0.0.0', '127.0.0.1', 'localhost'));
 $app->run();

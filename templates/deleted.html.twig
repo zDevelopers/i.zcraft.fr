@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block document_title %}Suppression d'image{% endblock %}
+{% block page_title %}Suppression d'image{% endblock %}
+
+{% block content %}
+    <div class="error">
+        {% if deleted %}
+            <h2>L'image a bien été supprimée.</h2>
+            <p>Plus personne ne pourra la consulter... via ce site, du moins.</p>
+        {% else %}
+            <h2>Lien de suppression invalide.</h2>
+            <p>Aucune image ne correspond à ce jeton de suppression.</p>
+        {% endif %}
+    </div>
+{% endblock %}
