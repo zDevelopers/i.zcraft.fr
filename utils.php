@@ -3,6 +3,8 @@
 /**
  * Loads the saved data (here, an array).
  * In the file, data is serialized,compressed and encoded in base64.
+ *
+ * @return array Stored data
  */
 function load_db()
 {
@@ -22,6 +24,10 @@ function load_db()
 /**
  * Saves the data in a file.
  * Returns the success of the operation.
+ *
+ * @param array $data The data to save
+ *
+ * @return int|boolean False on failure.
  */
 function save_db($data)
 {
@@ -32,9 +38,12 @@ function save_db($data)
 
 /**
  * Generates and writes a thumbnail.
+ *
  * @var $original_path string The path to the original file to reduce.
- * @var $mini_path string The path to the reduced file to write.
- * @var $thumb_size int The thumpnail size wanted.
+ * @var $mini_path     string The path to the reduced file to write.
+ * @var $thumb_size    int The thumbnail size wanted.
+ *
+ * @return bool Success
  */
 function make_thumbnail($original_path, $mini_path, $thumb_size)
 {
@@ -53,6 +62,9 @@ function make_thumbnail($original_path, $mini_path, $thumb_size)
 
     $dest_x = intval(($thumb_size - $new_width) / 2);
     $dest_y = intval(($thumb_size - $new_height) / 2);
+
+    $image_save_function = false;
+    $image_create_function = false;
 
     if ($original_type === 1)
     {
@@ -90,4 +102,18 @@ function make_thumbnail($original_path, $mini_path, $thumb_size)
     }
 
     return false;
+}
+
+function random_string($str_length = 10)
+{
+    $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $len = strlen($keyspace);
+    $randomString = '';
+
+    for ($i = 0; $i < $str_length; $i++)
+    {
+        $randomString .= $keyspace[rand(0, $len - 1)];
+    }
+
+    return $randomString;
 }

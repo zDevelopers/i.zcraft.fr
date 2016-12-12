@@ -3,6 +3,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 $app = new Silex\Application();
@@ -40,16 +41,19 @@ if (file_exists('config.php')) $app['config'] = array_merge($app['config'], incl
 
 
 
-// Routes & contollers ----------------------------------------
+// Routes & controllers ----------------------------------------
 
-$app->get('/', function() use($app)
+$app->get('/', function () use ($app)
 {
     return $app['twig']->render('index.html.twig');
-});
+})->bind('home');
 
 
-$app->post('/', function(Request $request) use($app)
+$app->post('/', function (Request $request) use ($app)
 {
+    /**
+     * @var \Symfony\Component\HttpFoundation\File\File
+     */
     $file = $request->files->get('image');
     $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
 
@@ -100,14 +104,79 @@ $app->post('/', function(Request $request) use($app)
     }
 
 
+    // Saves deletion token and expiration
+
+    $deletion_token = random_string(32);
+    $expiration_date = $request->request->has('expires') ? time() + intval($request->request->get('expires_after')) : -1;
+
+    $data = load_db();
+    if (!is_array($data['images'])) $data['images'] = [];
+
+    $data['images'][] = [
+        'original_name' => $file->getFilename(),
+        'storage_name' => $storage_name,
+        'storage_path' => $full_storage_path,
+        'storage_path_mini' => $mini_path,
+        'url' => $file_uri,
+        'url_mini' => $mini_uri,
+        'uploaded_at' => time(),
+        'uploaded_by' => $request->getClientIp(),
+        'deletion_token' => $deletion_token,
+        'expires_at' => $expiration_date
+    ];
+
+    save_db($data);
+
+
     // User view
 
     return $app['twig']->render('links.html.twig',
     [
         'full_url' => $file_uri,
         'mini_url' => $mini_uri,
-        'delete_url' => 'https://i.zcraft.fr/delete/mhVNBPpqpMiWZEdAzLKMY6MGxLstYUk4'
+        'delete_url' => $app['url_generator']->generate('delete', ['token' => $deletion_token], UrlGeneratorInterface::ABSOLUTE_URL),
+        'deletion_token' => $deletion_token
     ]);
+})->bind('upload');
+
+
+$app->get('/delete/{token}', function ($token)
+{
+
+})->bind('delete');
+
+/**
+ * Debug tool
+ */
+$app->get('/db', function () use ($app)
+{
+    if (!$app['debug']) $app->abort(404);
+
+    echo '<pre>';
+    var_dump(load_db());
+    echo '</pre>';
+
+    $dump = ob_get_clean();
+    ob_end_clean();
+    return $dump;
+});
+
+
+$app->error(function (\Exception $e, Request $request, $code) use ($app)
+{
+    $template = null;
+
+    switch ($code)
+    {
+        case 404:
+            $template = 'error_' . $code;
+            break;
+
+        default:
+            $template = 'error';
+    }
+
+    return $app['twig']->render($template . '.html.twig', ['code' => $code]);
 });
 
 

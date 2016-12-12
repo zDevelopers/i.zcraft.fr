@@ -465,6 +465,27 @@ input[type="submit"].invalid {
     color: red;
 }
 
+
+.error {
+    min-height: 54vh;
+
+    display: flex;
+    flex-flow: column;
+
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.error h2 {
+    margin-top: -10px;
+}
+
+.error p {
+    margin-top: 21px;
+}
+
+
 @media (max-width: 800px), (max-height: 600px) {
     html {
         font-size: 1em;

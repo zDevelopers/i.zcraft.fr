@@ -19,14 +19,14 @@
 	<label for="expires">
 	    Supprimer l'image après
 	    <select id="expires_after" name="expires_after">
-	        <option value="">10 minutes</option>
-	        <option value="">une heure</option>
-	        <option value="">24 heures</option>
-	        <option value="" selected>une semaine</option>
-	        <option value="">deux semaines</option>
-	        <option value="">un mois</option>
-	        <option value="">six mois</option>
-	        <option value="">un an</option>
+	        <option value="{{ 10 * 60 }}">10 minutes</option>
+	        <option value="{{ 60 * 60 }}">une heure</option>
+	        <option value="{{ 24 * 60 * 60 }}">24 heures</option>
+	        <option value="{{ 7 * 24 * 60 * 60 }}" selected>une semaine</option>
+	        <option value="{{ 14 * 24 * 60 * 60 }}">deux semaines</option>
+	        <option value="{{ 30 * 24 * 60 * 60 }}">un mois</option>
+	        <option value="{{ 6 * 30 * 24 * 60 * 60 }}">six mois</option>
+	        <option value="{{ 365 * 24 * 60 * 60 }}">un an</option>
 	    </select>
 	    <em class="description">Supprime automatiquement l'image et sa miniature après le temps spécifié.</em>
 	</label>
