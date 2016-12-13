@@ -255,7 +255,7 @@ body.dragging #file {
 
 #file #info_p {
     display: flex;
-    position: relative;
+    position: absolute;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -309,11 +309,12 @@ body.dragging #file {
     position: absolute;
     overflow: hidden;
     left: 50%;
-    -webkit-transform: translateX(-50%);
-    -moz-transform: translateX(-50%);
-    -ms-transform: translateX(-50%);
-    -o-transform: translateX(-50%);
-    transform: translateX(-50%);
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     max-height: 100%;
     max-width: 100%;
     border: solid 1px #2a640f;
