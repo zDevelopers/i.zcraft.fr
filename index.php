@@ -117,7 +117,8 @@ $app->post('/', function (Request $request) use ($app)
         'uploaded_at'       => time(),
         'uploaded_by'       => $request->getClientIp(),
         'deletion_token'    => $deletion_token,
-        'expires_at'        => $expiration_date
+        'expires_at'        => $expiration_date,
+        'deleted'           => false
     ];
 
 

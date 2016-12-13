@@ -14,3 +14,11 @@
         {% endif %}
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {% if deleted %}
+    <script type="text/javascript">
+        set_image_deleted('{{ image['storage_name'] }}');
+    </script>
+    {% endif %}
+{% endblock %}

@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function() {
  * @param url_mini The image's thumbnail URL.
  * @param url_delete The image's deletion URL.
  * @param expires_at The image's expiration date.
- * @param uploaded_at The image's expiration date.
+ * @param uploaded_at The image's upload date.
  */
 function save_image(name, storage_name, url, url_mini, url_delete, expires_at, uploaded_at)
 {
@@ -212,6 +212,11 @@ function save_image(name, storage_name, url, url_mini, url_delete, expires_at, u
     }));
 }
 
+/**
+ * Sets an image as deleted.
+ *
+ * @param storage_name The image's storage name.
+ */
 function set_image_deleted(storage_name)
 {
     if (!window.localStorage) return;
@@ -225,6 +230,10 @@ function set_image_deleted(storage_name)
     }
 }
 
+/**
+ * Returns all images uploaded from this browser.
+ * @returns {Array}
+ */
 function get_images()
 {
     if (!window.localStorage) return [];
