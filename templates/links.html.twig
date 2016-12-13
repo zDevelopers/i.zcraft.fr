@@ -28,3 +28,17 @@
     <pre>{{ delete_url }}</pre>
 </div>
 {% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    save_image(
+            '{{ image['original_name']|replace('\'', '\\\'') }}',
+            '{{ image['storage_name'] }}',
+            '{{ full_url }}',
+            '{{ mini_url }}',
+            '{{ delete_url }}',
+            {% if image['expires_at'] != -1 %}new Date({{ image['expires_at'] }}){% else %}false{% endif %},
+            new Date({{ image['uploaded_at'] }})
+    );
+</script>
+{% endblock %}

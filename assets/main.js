@@ -1,6 +1,6 @@
-document.addEventListener("DOMContentLoaded", function() {
-    'use strict';
+'use strict';
 
+document.addEventListener("DOMContentLoaded", function() {
     (function setupFileUpload() {
         var fileLabel = document.getElementById("file");
         var fileInput = document.querySelector('#file input[type="file"]');
@@ -181,6 +181,72 @@ document.addEventListener("DOMContentLoaded", function() {
             linkblock.firstElementChild.addEventListener("click", function(e) {
                 selectText(e.target);
             });
-        };
+        }
     })();
 });
+
+
+/**
+ * Saves an image into the browser local storage.
+ *
+ * @param name The image name.
+ * @param storage_name The image' storage name.
+ * @param url The image's URL.
+ * @param url_mini The image's thumbnail URL.
+ * @param url_delete The image's deletion URL.
+ * @param expires_at The image's expiration date.
+ * @param uploaded_at The image's expiration date.
+ */
+function save_image(name, storage_name, url, url_mini, url_delete, expires_at, uploaded_at)
+{
+    if (!window.localStorage) return;
+
+    window.localStorage.setItem('izcraft.image.' + storage_name, JSON.stringify({
+        'original_name': name,
+        'url': url,
+        'url_mini': url_mini,
+        'url_delete': url_delete,
+        'expires_at': expires_at,
+        'uploaded_at': uploaded_at,
+        'deleted': false
+    }));
+}
+
+function set_image_deleted(storage_name)
+{
+    if (!window.localStorage) return;
+
+    var data = window.localStorage.getItem('izcraft.image.' + storage_name);
+    if (data)
+    {
+        data = JSON.parse(data);
+        data['deleted'] = true;
+        window.localStorage.setItem('izcraft.image.' + storage_name, JSON.stringify(data));
+    }
+}
+
+function get_images()
+{
+    if (!window.localStorage) return [];
+
+    var images = [];
+
+    for (var i = 0; i < window.localStorage.length; i++)
+    {
+        var key = window.localStorage.key(i);
+        if (key.substr(0, 14) == 'izcraft.image.')
+        {
+            images.push(JSON.parse(window.localStorage.getItem(key)));
+        }
+    }
+
+    images.sort(function(a, b)
+    {
+        var date_a = new Date(a['uploaded_at']);
+        var date_b = new Date(b['uploaded_at']);
+
+        return date_a.getTime() < date_b.getTime() ? -1 : 1;
+    });
+
+    return images;
+}
