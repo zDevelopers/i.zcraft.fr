@@ -256,6 +256,8 @@ body.dragging #file {
 #file #info_p {
     display: flex;
     position: absolute;
+    top: 0;
+    left: 0;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -306,15 +308,7 @@ body.dragging #file {
 }
 
 #file #info_p figure img {
-/*     position: absolute; */
-    overflow: hidden;/*
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);*/
+    overflow: hidden;
     max-height: 100%;
     max-width: 100%;
     border: solid 1px #2a640f;
