@@ -46,8 +46,7 @@ h1 {
     background: #3f9718;
     position: relative;
     color: white;
-    padding: .5em;
-    padding-top: .6em;
+    padding: .6em 0 .5em 96px;
     font-size: 1.5em;
     text-align: center;
     letter-spacing: .05em;
@@ -159,6 +158,7 @@ h2 {
     background: #3f9718;
     color: white;
     border-radius: 0 5px 5px 0;
+    font-size: 14px !important;
 }
 
 .linkblock button:hover {
@@ -266,7 +266,7 @@ body.dragging #file {
 }
 
 #file #info_p ul {
-    margin: 0 .5em 2em .5em;
+    margin: 0 .5em ;
     list-style-type: none;
     max-width: 90%;
 }
@@ -322,10 +322,9 @@ body.dragging #file {
 }
 
 #file #info_p > p {
-    position: absolute;
-    bottom: 2%;
     left: 0;
     width: 100%;
+    padding: .5em;
     
     font-size: .8em;
     color: #888;
@@ -362,7 +361,7 @@ body.dragging #file {
     opacity: 0;
     border-radius: 45px;
     cursor: pointer;
-    z-index: 9001;
+    z-index: 1000;
 }
 
 label .description {
@@ -377,6 +376,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"] + label {
+    display: block;
     cursor: pointer;
     margin: .5em 3%;
 }
@@ -425,20 +425,37 @@ select {
     bottom: 1px;
 }
 
-input[type="submit"] {
+form > input[type="submit"], fieldset#buttons {
     display: block;
-    width: 90%;
+    margin: 2% 5%;
+}
+
+fieldset#buttons {
+    display: flex;
+    align-content: center;
+    margin: 2% 0;
+}
+
+fieldset#buttons button, input[type="submit"] {
     border: solid 1px transparent;
-    background: #3f9718;
     border-radius: 5px;
     padding: .2em .7em;
-    margin: .5em 5%;
+    margin: 0 .5rem;
     box-shadow: 0 0 3px rgba(0,50,0,.8);
-    color: white;
     font-size: 1.1em;
     text-transform: uppercase;
     cursor: pointer;
     transition: all .2s ease-in-out; 
+}
+
+fieldset#buttons input[type="submit"] {
+    flex: 1;
+    width: 100%;
+}
+
+input[type="submit"] {
+    background: #3f9718;
+    color: white;
 }
 
 input[type="submit"]:hover {
@@ -452,12 +469,27 @@ input[type="submit"]:disabled {
     background: white;
     border-color: #3f9718;
     color: #3f9718;
+    cursor: default;
 }
 
 input[type="submit"].invalid {
     border-color: red;
     font-weight: bold;
     color: red;
+    cursor: default;
+}
+
+#optionsButton {
+    display: none;
+    
+    background: white;
+    color: #3f9718;
+    border-color: #3f9718 !important;
+    font-family: izcraft;
+}
+
+fieldset#buttons button:hover {
+    box-shadow: 0 0 8px rgba(0,50,0,.8);
 }
 
 
@@ -480,11 +512,25 @@ input[type="submit"].invalid {
     margin-top: 21px;
 }
 
+fieldset {
+    border: 0;
+}
 
-@media (max-width: 800px), (max-height: 600px) {
+#main-dropdown {
+    display: none;
+}
+
+#main-dropdown.visible {
+    visibility: visible;
+}
+
+@media (max-height: 600px) {
     html {
         font-size: 1em;
     }
+}
+
+@media (max-width: 800px), (max-height: 600px) {
     body {
         margin: 0;
         box-shadow: none;
@@ -546,5 +592,84 @@ input[type="submit"].invalid {
         margin-bottom: 0;
         padding-bottom: .25em;
     }
+    
+    fieldset#buttons {
+        font-size: 28px;
+    }
+    
+    fieldset#buttons button, input[type="submit"] {
+        padding: .2em .3em;
+        margin: .5rem;
+    }
 }
 
+@media (max-width: 400px) {
+    h1 {
+        font-size: 5.5vw;
+    }
+}
+
+@media (max-width: 350px) {
+    h2 {
+        font-size: 5vw;
+    }
+    
+    .linkblock a, .linkblock pre {
+        font-size: 4vw;
+    }
+}
+
+@media (max-width: 500px), (max-height: 450px) {
+    body.js #optionsButton {
+        display: block;
+    }
+    
+    input[type="submit"]:disabled {
+        font-size: 4vw;
+    }
+    
+    body.js fieldset#options:before {
+        display: block;
+        content: "Options";
+        background: #3f9718;
+        color: white;
+        padding: .5em;
+        padding-top: .6em;
+        font-size: 1.5em;
+        text-align: center;
+        letter-spacing: .05em;
+        font-weight: bold;
+    }
+    
+    body.js fieldset#options {
+        box-shadow: 0 0 30px rgba(0,0,0,.8);
+        position: fixed;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: white;
+        z-index: 9001;
+        max-width: 90%;
+        visibility: hidden;
+        opacity: 0;
+    }
+    
+    body.js fieldset#options.visible {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    #main-dropdown {
+        display: block;
+        content: "";
+        background: rgba(0,0,0,.7);
+        position: fixed;
+        z-index: 8888;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        visibility: hidden;
+    }
+    
+}
