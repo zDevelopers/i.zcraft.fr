@@ -14,9 +14,9 @@ document.addEventListener("DOMContentLoaded", function() {
         var validFileType = false;
         var validFileSize = false;
         var dragStatus = 0;
-        
+
         if(!(fileLabel && fileInput && selectParagraph && submitInput && deletionSelect && deletionCheckbox)) return;
-        
+
         document.body.className = "js";
         fileInput.addEventListener("change", updateForm);
         submitInput.parentNode.replaceChild(buttonFieldset, submitInput);
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.documentElement.addEventListener("dragenter", dragStart);
         document.documentElement.addEventListener("dragleave", dragStop);
         fileInput.addEventListener("change", dragStop);
-        
+
         deletionSelect.addEventListener("change", function(e) {
             deletionCheckbox.checked = true;
         });
@@ -72,10 +72,10 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             infoParagraph.updateInfo();
         }
-        
+
         function makeInfoParagraph() {
             var infoParagraph = document.createElement("p");
-            
+
             var previewContainer = infoParagraph.appendChild(document.createElement("figure"));
             var previewImage = previewContainer.appendChild(document.createElement("img"));
             var infoList = infoParagraph.appendChild(document.createElement("ul"));
@@ -84,25 +84,27 @@ document.addEventListener("DOMContentLoaded", function() {
             var fileSizeInfo = infoList.appendChild(document.createElement("li"));
             var selectOtherParagraph = infoParagraph.appendChild(document.createElement("p"));
             selectOtherParagraph.innerHTML = '<em>Glissez-déposez</em> ou <em>cliquez</em> dans la zone pour sélectionner une autre image</p>';
-            
+
             infoParagraph.id = "info_p";
             infoParagraph.updateInfo = function() {
                 fileNameInfo.innerHTML = "";
                 fileNameInfo.appendChild(document.createTextNode(fileInput.value));
                 if(fileInput.files && fileInput.files[0]) {
                     var selectedFile = fileInput.files[0];
-                    validFileSize = selectedFile.size <= 5242880;
+                    var maxFileSize = parseInt(fileInput.dataset.maxsize);
+
+                    validFileSize = selectedFile.size <= maxFileSize;
                     validFileType = selectedFile.type.substr(0, 6) == "image/";
-                    
+
                     fileTypeInfo.innerHTML = "Fichier <code>" + (selectedFile.type || "Inconnu");
                     fileSizeInfo.innerHTML = beautifySize(selectedFile.size);
-                    
+
                     fileTypeInfo.className = validFileType ? "" : "invalid";
                     fileSizeInfo.className = validFileSize ? "" : "invalid";
                     submitInput.className = (validFileSize && validFileType) ? "" : "invalid";
                     infoParagraph.className = (validFileSize && validFileType) ? "" : "invalid";
                     submitInput.disabled = !(validFileSize && validFileType);
-                    
+
                     if(validFileType) {
                         var reader = new FileReader();
                         reader.onload = function(e) {previewImage.src = e.target.result;};
@@ -110,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         previewImage.removeAttribute("src");
                     }
-                    
+
                     if(!validFileType) {submitInput.value = "Fichier invalide";}
                     else if(!validFileSize) {submitInput.value = "Fichier trop volumineux";}
                     else {submitInput.value = "Envoyer";}
@@ -118,24 +120,24 @@ document.addEventListener("DOMContentLoaded", function() {
                     submitInput.disabled = true;
                     submitInput.value = "Sélectionnez un fichier";
                 }
-                
+
             };
             return infoParagraph;
         }
-        
+
         function beautifySize(size) {
             var units = ['octets', 'Kio', 'Mio', 'Gio', 'Tio'];
             var currentUnit = 0;
-            
+
             while (size > 1024) {
                 ++currentUnit;
                 size /= 1024;
             }
-            
+
             return size.toFixed(1) + ' ' + units[currentUnit];
         }
     })();
-    
+
     (function setupClipboardActions() {
         function selectText(element) {
             var doc = document, range, selection;
@@ -159,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var button = linkblocks[i].appendChild(document.createElement("button"));
             button.textContent = "📋";
             button.title = "Copier dans le presse-papiers";
-            
+
             button.addEventListener("click", function(button) {
                 var copyBuffer = document.body.appendChild(document.createElement("textarea"));
                 var button = button.target;
@@ -175,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     else {
                         button.setAttribute("data-tooltip", "Copié !");
                     }
-                } 
+                }
                 catch(e)
                 {
                     console.error("Error while executing copy command: %o", e);
@@ -365,5 +367,3 @@ function get_images()
 
     return images;
 }
-
-

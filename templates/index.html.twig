@@ -6,30 +6,33 @@
 <form method="post" enctype="multipart/form-data">
 	<div id="file">
 	    <p id="select_p"><em>Glissez-déposez</em> ou <em>cliquez</em> pour sélectionner une image</p>
-	    <input type="file" name="image" accept="image/*" />
+	    <input type="file" name="image" accept="image/*" data-maxsize="{{ config['max_file_size'] }}" />
 	</div>
 
-	<input type="checkbox" id="exif" name="exif" checked />
-	<label for="exif">
-	    Supprimer les données personnelles de l'image
-	    <em class="description">Supprime les méta-données EXIF des images (informations de géolocalisation, sur l'appareil photo…).</em>
-	</label>
 
-	<input type="checkbox" id="expires" name="expires" />
-	<label for="expires">
-	    Supprimer l'image après
-	    <select id="expires_after" name="expires_after">
-	        <option value="{{ 10 * 60 }}">10 minutes</option>
-	        <option value="{{ 60 * 60 }}">une heure</option>
-	        <option value="{{ 24 * 60 * 60 }}">24 heures</option>
-	        <option value="{{ 7 * 24 * 60 * 60 }}" selected>une semaine</option>
-	        <option value="{{ 14 * 24 * 60 * 60 }}">deux semaines</option>
-	        <option value="{{ 30 * 24 * 60 * 60 }}">un mois</option>
-	        <option value="{{ 6 * 30 * 24 * 60 * 60 }}">six mois</option>
-	        <option value="{{ 365 * 24 * 60 * 60 }}">un an</option>
-	    </select>
-	    <em class="description">Supprime automatiquement l'image et sa miniature après le temps spécifié.</em>
-	</label>
+	<fieldset id="options">
+		<input type="checkbox" id="exif" name="exif" checked />
+		<label for="exif">
+		    Supprimer les données personnelles de l'image
+		    <em class="description">Supprime les méta-données EXIF des images (informations de géolocalisation, sur l'appareil photo…).</em>
+		</label>
+
+		<input type="checkbox" id="expires" name="expires" />
+		<label for="expires">
+		    Supprimer l'image après
+		    <select id="expires_after" name="expires_after">
+		        <option value="{{ 10 * 60 }}">10 minutes</option>
+		        <option value="{{ 60 * 60 }}">une heure</option>
+		        <option value="{{ 24 * 60 * 60 }}">24 heures</option>
+		        <option value="{{ 7 * 24 * 60 * 60 }}" selected>une semaine</option>
+		        <option value="{{ 14 * 24 * 60 * 60 }}">deux semaines</option>
+		        <option value="{{ 30 * 24 * 60 * 60 }}">un mois</option>
+		        <option value="{{ 6 * 30 * 24 * 60 * 60 }}">six mois</option>
+		        <option value="{{ 365 * 24 * 60 * 60 }}">un an</option>
+		    </select>
+		    <em class="description">Supprime automatiquement l'image et sa miniature après le temps spécifié.</em>
+		</label>
+	</fieldset>
 
 	<input type="submit" value="Envoyer" />
 </form>

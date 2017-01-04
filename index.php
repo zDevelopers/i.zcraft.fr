@@ -45,7 +45,7 @@ if (file_exists('config.php')) $app['config'] = array_merge($app['config'], incl
 
 $app->get('/', function () use ($app)
 {
-    return $app['twig']->render('index.html.twig');
+    return $app['twig']->render('index.html.twig', ['config' => $app['config']]);
 })
 ->bind('home');
 
@@ -53,14 +53,21 @@ $app->get('/', function () use ($app)
 $app->post('/', function (Request $request) use ($app)
 {
     $file = $request->files->get('image');
-    $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
 
-    if (!$file->isValid()
-        || !in_array($mime_type, $app['config']['allowed_mime_types'])
-        || $file->getClientSize() > $file->getMaxFilesize()
-        || $file->getClientSize() > $app['config']['max_file_size'])
+    if (!$file->isValid())
     {
         $app->abort(400);
+    }
+    else
+    {
+        $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
+
+        if (!in_array($mime_type, $app['config']['allowed_mime_types'])
+            || $file->getClientSize() > $file->getMaxFilesize()
+            || $file->getClientSize() > $app['config']['max_file_size'])
+        {
+            $app->abort(400);
+        }
     }
 
 
@@ -75,7 +82,17 @@ $app->post('/', function (Request $request) use ($app)
     $base_uri = $request->getURI() . $app['config']['public_storage_dir'] . '/' . (!$app['config']['strip_folders'] ? $storage_path : '');
     $file_uri = $base_uri . $storage_name;
 
-    
+
+    // EXIF deletion
+
+    if ($request->request->get('exif', false))
+    {
+        rename($full_storage_path, $full_storage_path . '.exif');
+        remove_exif($full_storage_path . '.exif', $full_storage_path);
+        unlink($full_storage_path . '.exif');
+    }
+
+
     // Thumbnail generation
 
     $mini_name = 'mini_' . $storage_name;
@@ -125,8 +142,6 @@ $app->post('/', function (Request $request) use ($app)
     // Saves deletion token and expiration
 
     $db = load_db();
-    if (!is_array($db['images'])) $db['images'] = [];
-
     $db['images'][] = $image_data;
 
     save_db($db);
@@ -140,7 +155,8 @@ $app->post('/', function (Request $request) use ($app)
         'mini_url' => $mini_uri,
         'delete_url' => $app['url_generator']->generate('delete', ['token' => $deletion_token], UrlGeneratorInterface::ABSOLUTE_URL),
         'deletion_token' => $deletion_token,
-        'image' => $image_data
+        'image' => $image_data,
+        'config' => $app['config']
     ]);
 })
 ->bind('upload');
@@ -205,6 +221,7 @@ $app->error(function (\Exception $e, Request $request, $code) use ($app)
     switch ($code)
     {
         case 404:
+        case 400:
             $template = 'error_' . $code;
             break;
 

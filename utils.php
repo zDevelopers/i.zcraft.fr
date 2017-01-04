@@ -13,12 +13,16 @@ function load_db()
 
     if (!is_file($data_file))
     {
-        return [];
+        $db = [];
     }
     else
     {
-        return unserialize(gzinflate(base64_decode(substr(file_get_contents($data_file), 8))));
+        $db = unserialize(gzinflate(base64_decode(substr(file_get_contents($data_file), 8))));
     }
+
+    if (!isset($db['images']) || !is_array($db['images'])) $db['images'] = [];
+
+    return $db;
 }
 
 /**
@@ -47,7 +51,7 @@ function save_db($data)
  */
 function make_thumbnail($original_path, $mini_path, $thumb_size)
 {
-	list($original_width, $original_height, $original_type) = getimagesize($original_path);
+    list($original_width, $original_height, $original_type) = getimagesize($original_path);
 
     if ($original_width < $original_height)
     {
@@ -104,16 +108,55 @@ function make_thumbnail($original_path, $mini_path, $thumb_size)
     return false;
 }
 
+/**
+ * Removes the EXIF data from the given image,
+ * and writes a new image without it at the new
+ * location.
+ *
+ * Thanks http://stackoverflow.com/a/38862429 .
+ *
+ * @param string $old Path to the old image.
+ * @param string $new Path to the new image without EXIF data.
+ */
+function remove_exif($old, $new)
+{
+    $f1 = fopen($old, 'rb');
+    $f2 = fopen($new, 'wb');
+
+    // Find EXIF marker
+    while (($s = fread($f1, 2))) {
+        $word = unpack('ni', $s)['i'];
+        if ($word == 0xFFE1) {
+            // Read length (includes the word used for the length)
+            $s = fread($f1, 2);
+            $len = unpack('ni', $s)['i'];
+            // Skip the EXIF info
+            fread($f1, $len - 2);
+            break;
+        } else {
+            fwrite($f2, $s, 2);
+        }
+    }
+
+    // Write the rest of the file
+    while (($s = fread($f1, 4096))) {
+        fwrite($f2, $s, strlen($s));
+    }
+
+    fclose($f1);
+    fclose($f2);
+}
+
 function random_string($str_length = 10)
 {
     $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $len = strlen($keyspace);
-    $randomString = '';
+    $random_string = '';
 
     for ($i = 0; $i < $str_length; $i++)
     {
-        $randomString .= $keyspace[rand(0, $len - 1)];
+        $random_string .= $keyspace[rand(0, $len - 1)];
     }
 
-    return $randomString;
+    return $random_string;
 }
