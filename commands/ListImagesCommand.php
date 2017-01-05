@@ -12,7 +12,7 @@ class ListImagesCommand extends \Knp\Command\Command
     protected function configure()
     {
         $this->setName("i:list")
-             ->setDescription("Lists the images in the database")
+             ->setDescription("Lists the images in the database.")
              ->setHelp('This command allows you to list the images uploaded by users. The list can be filtered using command arguments.')
              ->addOption('show-deleted', null, InputOption::VALUE_NONE, 'Pass to display deleted images.')
              ->addOption('with-tokens', null, InputOption::VALUE_NONE, 'Pass to display deletion tokens.')
@@ -41,7 +41,7 @@ class ListImagesCommand extends \Knp\Command\Command
             $row = [
                 $image['storage_name'], $image['original_name'],
                 date('d/m/Y H:i:s', $image['uploaded_at']) . ' by ' . $image['uploaded_by'],
-                $image['expires_at'] > -1 ? date('d/m/Y H:i:s', $image['expires_at']) : 'never',
+                $image['expires_at'] > -1 ? $image['expires_at'] == 0 ? 'at first view' : date('d/m/Y H:i:s', $image['expires_at']) : 'never',
                 isset($image['deleted']) && $image['deleted'] ? 'yes' : 'no'
             ];
 
@@ -60,7 +60,7 @@ class ListImagesCommand extends \Knp\Command\Command
             if ($show_tokens) $header[] = 'Deletion token';
 
             $io->table($header, $table);
-            $io->text('Total: ' . count($table) . ' out of ' . count($db['images']) . ' images total.');
+            $io->text(count($table) . ' out of ' . count($db['images']) . ' images total.');
         }
     }
 

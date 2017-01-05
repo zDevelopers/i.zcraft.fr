@@ -20,6 +20,18 @@ $app['config'] =
     'allowed_mime_types' => ['image/png', 'image/jpeg', 'image/gif', 'image/bmp', 'image/tiff'],
     'max_file_size' => 1024 * 1024 * 32,
 
+    'features' => [
+        // If this is enabled, a cron must call the command
+        // ./console --quiet i:purge every few minutes.
+        'expiration' => true,
+
+
+        // If this is enabled, the webserver must be configured to call
+        // ./console i:hit --quiet <url> when an image was sent to a client.
+        // Requires expiration enabled.
+        'deletion_at_first_view' => true
+    ],
+
     'thumb_size' => 300,
 
     'use_system_convert' => true,

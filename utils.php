@@ -58,6 +58,24 @@ function get_image($db, $storage_name)
 }
 
 /**
+ * Saves an image in the database.
+ *
+ * @return array The new database.
+ */
+function set_image($db, $image)
+{
+    foreach ($db['images'] as $index => $db_image)
+    {
+        if ($db_image['storage_name'] == $image['storage_name'])
+        {
+            $db['images'][$index] = $image;
+        }
+    }
+
+    return $db;
+}
+
+/**
  * Deletes an image.
  *
  * @param array $image An array containing the image data.
@@ -82,12 +100,29 @@ function delete_image($image, $root)
  */
 function delete_image_if_expired($image, $root)
 {
-    if (!$image['deleted'] && $image['expires_at'] > -1 && $image['expires_at'] <= time())
+    if (!$image['deleted'] && $image['expires_at'] > -1 && $image['expires_at'] != 0 && $image['expires_at'] <= time())
     {
         return delete_image($image, $root);
     }
 
     else return false;
+}
+
+
+/**
+ * Extracts the name of an image.
+ *
+ * @param string $image The image name or URL
+ * @return The image name.
+ */
+function extract_image_name($image)
+{
+    if (strpos($image, '/') !== false)
+    {
+        return array_pop(explode('/', $image));
+    }
+
+    else return $image;
 }
 
 

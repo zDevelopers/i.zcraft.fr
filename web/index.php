@@ -20,6 +20,8 @@ $app->post('/', function (Request $request) use ($app)
 {
     $file = $request->files->get('image');
 
+    if ($file == null) $app->abort(400);
+
     if (!$file->isValid())
     {
         $app->abort(400);
@@ -88,7 +90,13 @@ $app->post('/', function (Request $request) use ($app)
     // Data aggregation
 
     $deletion_token = random_string(32);
-    $expiration_date = $request->request->has('expires') ? time() + intval($request->request->get('expires_after')) : -1;
+    $expiration_date = -1;
+
+    if ($request->request->has('expires'))
+    {
+        $expires_after = intval($request->request->get('expires_after'));
+        $expiration_date = $expires_after == 0 ? 0 : time() + intval($request->request->get('expires_after'));
+    }
 
     $image_data = [
         'original_name'     => $file->getClientOriginalName(),

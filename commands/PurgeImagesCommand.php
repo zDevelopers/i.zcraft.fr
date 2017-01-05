@@ -39,6 +39,6 @@ class PurgeImagesCommand extends \Knp\Command\Command
 
         if ($deleted > 0) save_db($db);
 
-        $io->success('Successfully purged ' . $deleted . ' expired image' . ($deleted != 1 ? 's' : ''));
+        $io->success('Successfully purged ' . $deleted . ' expired image' . ($deleted != 1 ? 's' : '') . '.');
     }
 }

@@ -10,5 +10,6 @@ $console = &$app["console"];
 $console->add(new \IZcraft\Command\ListImagesCommand());
 $console->add(new \IZcraft\Command\ShowImageCommand());
 $console->add(new \IZcraft\Command\PurgeImagesCommand());
+$console->add(new \IZcraft\Command\ImageHitCommand());
 
 $console->run();

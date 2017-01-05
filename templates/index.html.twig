@@ -17,10 +17,12 @@
 		    <em class="description">Supprime les méta-données EXIF des images (informations de géolocalisation, sur l'appareil photo…).</em>
 		</label>
 
+		{% if not config['features']['expiration'] %}<div style="display: none;">{% endif %}
 		<input type="checkbox" id="expires" name="expires" />
 		<label for="expires">
 		    Supprimer l'image après
 		    <select id="expires_after" name="expires_after">
+		        {% if config['features']['deletion_at_first_view'] %}<option value="0">la première visualisation</option>{% endif %}
 		        <option value="{{ 10 * 60 }}">10 minutes</option>
 		        <option value="{{ 60 * 60 }}">une heure</option>
 		        <option value="{{ 24 * 60 * 60 }}">24 heures</option>
@@ -32,6 +34,7 @@
 		    </select>
 		    <em class="description">Supprime automatiquement l'image et sa miniature après le temps spécifié.</em>
 		</label>
+		{% if not config['features']['expiration'] %}</div>{% endif %}
 	</fieldset>
 
 	<input type="submit" value="Envoyer" />
