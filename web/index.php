@@ -1,44 +1,10 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-
-$app = new Silex\Application();
-
-
-// App config (or create config.php to override) --------------
-
-$app['config'] =
-[
-    'storage_dir' => 'static',
-    'public_storage_dir' => 'static',
-    'strip_folders' => false,
-
-    'allowed_mime_types' => ['image/png', 'image/jpeg', 'image/gif', 'image/bmp', 'image/tiff'],
-    'max_file_size' => 1024 * 1024 * 32,
-
-    'thumb_size' => 300,
-
-    'use_system_convert' => true,
-
-    'data_file' => 'db.php'
-];
-
-
-
-// App bootstrap ----------------------------------------------
-
-require_once 'utils.php';
-
-$app->register(new Silex\Provider\TwigServiceProvider(), [
-    'twig.path' => __DIR__.'/templates',
-]);
-
-if (file_exists('config.php')) $app['config'] = array_merge($app['config'], include('config.php'));
-
+$app = require '../bootstrap.php';
 
 
 // Routes & controllers ----------------------------------------
@@ -127,8 +93,8 @@ $app->post('/', function (Request $request) use ($app)
     $image_data = [
         'original_name'     => $file->getClientOriginalName(),
         'storage_name'      => $storage_name,
-        'storage_path'      => $full_storage_path,
-        'storage_path_mini' => $mini_path,
+        'storage_path'      => $storage_path . $storage_name,
+        'storage_path_mini' => $storage_path . $mini_name,
         'url'               => $file_uri,
         'url_mini'          => $mini_uri,
         'uploaded_at'       => time(),
@@ -176,8 +142,8 @@ $app->get('/delete/{token}', function ($token) use ($app)
 
             $image = $db['images'][$i];
 
-            unlink(__DIR__ . '/' . $image['storage_path']);
-            unlink(__DIR__ . '/' . $image['storage_path_mini']);
+            unlink($app['config']['storage_dir'] . '/' . $image['storage_path']);
+            unlink($app['config']['storage_dir'] . '/' . $image['storage_path_mini']);
 
             $image['deleted'] = true;
             $db['images'][$i] = $image;
