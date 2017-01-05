@@ -12,7 +12,7 @@ class ShowImageCommand extends \Knp\Command\Command
 {
     protected function configure()
     {
-        $this->setName("images:show")
+        $this->setName("i:show")
              ->setDescription("Displays details on an image")
              ->setHelp('This command allows you to display details on an uploaded file')
              ->addArgument('image', InputArgument::REQUIRED, 'The name of the image', null);

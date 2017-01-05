@@ -140,14 +140,7 @@ $app->get('/delete/{token}', function ($token) use ($app)
         {
             if ($db['images'][$i]['deletion_token'] != $token || $db['images'][$i]['deleted']) continue;
 
-            $image = $db['images'][$i];
-
-            unlink($app['config']['storage_dir'] . '/' . $image['storage_path']);
-            unlink($app['config']['storage_dir'] . '/' . $image['storage_path_mini']);
-
-            $image['deleted'] = true;
-            $db['images'][$i] = $image;
-
+            $db['images'][$i] = delete_image($db['images'][$i], $app['config']['storage_dir']);
             break;
         }
     }

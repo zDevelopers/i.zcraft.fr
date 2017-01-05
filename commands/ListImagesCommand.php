@@ -11,10 +11,10 @@ class ListImagesCommand extends \Knp\Command\Command
 {
     protected function configure()
     {
-        $this->setName("images:list")
+        $this->setName("i:list")
              ->setDescription("Lists the images in the database")
              ->setHelp('This command allows you to list the images uploaded by users. The list can be filtered using command arguments.')
-             ->addOption('with-deleted', null, InputOption::VALUE_NONE, 'Pass to display deleted images.')
+             ->addOption('show-deleted', null, InputOption::VALUE_NONE, 'Pass to display deleted images.')
              ->addOption('with-tokens', null, InputOption::VALUE_NONE, 'Pass to display deletion tokens.')
              ->addOption('in-name', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Filters the original files names. Multiple values will be ORed.', [])
              ->addOption('from-ip', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Filters by uploader IP address.  Multiple values will be ORed.', []);
@@ -24,7 +24,7 @@ class ListImagesCommand extends \Knp\Command\Command
     {
         $db = load_db();
 
-        $show_deleted = $input->getOption('with-deleted') != null;
+        $show_deleted = $input->getOption('show-deleted') != null;
         $show_tokens  = $input->getOption('with-tokens') != null;
         $filter_names = $input->getOption('in-name');
         $filter_ips   = $input->getOption('from-ip');
@@ -39,7 +39,7 @@ class ListImagesCommand extends \Knp\Command\Command
             if (!$this->filter($filter_ips, $image['uploaded_by'])) continue;
 
             $row = [
-                $image['storage_name'] . ' (' . $image['original_name'] . ')',
+                $image['storage_name'], $image['original_name'],
                 date('d/m/Y H:i:s', $image['uploaded_at']) . ' by ' . $image['uploaded_by'],
                 $image['expires_at'] > -1 ? date('d/m/Y H:i:s', $image['expires_at']) : 'never',
                 isset($image['deleted']) && $image['deleted'] ? 'yes' : 'no'
@@ -56,7 +56,7 @@ class ListImagesCommand extends \Knp\Command\Command
         }
         else
         {
-            $header = ['Name (client name)', 'Uploaded', 'Expires', 'Deleted'];
+            $header = ['Name', 'Client name', 'Uploaded', 'Expires', 'Deleted'];
             if ($show_tokens) $header[] = 'Deletion token';
 
             $io->table($header, $table);

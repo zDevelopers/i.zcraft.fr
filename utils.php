@@ -57,6 +57,39 @@ function get_image($db, $storage_name)
     return false;
 }
 
+/**
+ * Deletes an image.
+ *
+ * @param array $image An array containing the image data.
+ * @param string $root The storage root directory.
+ * @return The new image data to store into the database.
+ */
+function delete_image($image, $root)
+{
+    unlink($root . '/' . $image['storage_path']);
+    unlink($root . '/' . $image['storage_path_mini']);
+
+    $image['deleted'] = true;
+    return $image;
+}
+
+/**
+ * Deletes an image if expired.
+ *
+ * @param array $image An array containing the image data.
+ * @param string $root The storage root directory.
+ * @return The new image data, if the image was deleted, or false if nothing was changed.
+ */
+function delete_image_if_expired($image, $root)
+{
+    if (!$image['deleted'] && $image['expires_at'] > -1 && $image['expires_at'] <= time())
+    {
+        return delete_image($image, $root);
+    }
+
+    else return false;
+}
+
 
 /**
  * Generates and writes a thumbnail.
