@@ -60,6 +60,8 @@ function get_image($db, $storage_name)
 /**
  * Saves an image in the database.
  *
+ * @param array $db The database.
+ * @param array $image The image to save into the database.
  * @return array The new database.
  */
 function set_image($db, $image)

@@ -95,7 +95,7 @@ $app->post('/', function (Request $request) use ($app)
     if ($request->request->has('expires'))
     {
         $expires_after = intval($request->request->get('expires_after'));
-        $expiration_date = $expires_after == 0 ? 0 : time() + intval($request->request->get('expires_after'));
+        $expiration_date = $expires_after == 0 ? 0 : time() + $expires_after;
     }
 
     $image_data = [
