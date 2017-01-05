@@ -6,5 +6,8 @@ set_time_limit(0);
 $app = require_once 'bootstrap.php';
 
 $console = &$app["console"];
+
 $console->add(new \IZcraft\Command\ListImagesCommand());
+$console->add(new \IZcraft\Command\ShowImageCommand());
+
 $console->run();

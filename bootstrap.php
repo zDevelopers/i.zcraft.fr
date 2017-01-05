@@ -24,7 +24,7 @@ $app['config'] =
 
     'use_system_convert' => true,
 
-    'data_file' => 'db.php'
+    'data_file' => __DIR__ . '/db.php'
 ];
 
 

@@ -51,10 +51,10 @@ $app->post('/', function (Request $request) use ($app)
 
     // EXIF deletion
 
-    if ($request->request->get('exif', false))
+    if ($request->request->get('exif', false) && in_array($mime_type, ['image/jpeg', 'image/tiff']))
     {
         rename($full_storage_path, $full_storage_path . '.exif');
-        remove_exif($full_storage_path . '.exif', $full_storage_path);
+        @remove_exif($full_storage_path . '.exif', $full_storage_path);
         unlink($full_storage_path . '.exif');
     }
 
