@@ -2,15 +2,34 @@
 
 document.addEventListener("DOMContentLoaded", function() {
     (function setupFileUpload() {
+        var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
         var fileLabel = document.getElementById("file");
         var fileInput = document.querySelector('#file input[type="file"]');
         var submitInput = document.querySelector('input[type="submit"]');
         var selectParagraph = document.getElementById("select_p");
         var deletionSelect = document.getElementById("expires_after");
         var deletionCheckbox = document.getElementById("expires");
-        var infoParagraph = makeInfoParagraph();
         var buttonFieldset = document.createElement("fieldset");
         var optionsButton = document.createElement("button");
+
+        var text_second_invite = '<em>Glissez-déposez</em> ou <em>cliquez</em> dans la zone pour sélectionner une autre image.';
+        if (width < 721) {
+            var rand = Math.random();
+            if (rand < 0.9) {
+                selectParagraph.innerHTML = '<em>Tapotez</em> pour sélectionner une image';
+                text_second_invite = '<em>Tapotez</em> dans la zone pour sélectionner une autre image.';
+            }
+            else if (rand < 0.995) {
+                selectParagraph.innerHTML = '<em>Caressez tendrement</em> pour sélectionner une image';
+                text_second_invite = '<em>Caressez la zone tendrement</em> pour sélectionner une autre image.';
+            }
+            else {
+                selectParagraph.innerHTML = '<em>Léchez avec passion</em> pour sélectionner une image';
+                text_second_invite = '<em>Léchez la zone avec passion</em> pour sélectionner une autre image.';
+            }
+        }
+
+        var infoParagraph = makeInfoParagraph();
         var validFileType = false;
         var validFileSize = false;
         var dragStatus = 0;
@@ -83,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var fileTypeInfo = infoList.appendChild(document.createElement("li"));
             var fileSizeInfo = infoList.appendChild(document.createElement("li"));
             var selectOtherParagraph = infoParagraph.appendChild(document.createElement("p"));
-            selectOtherParagraph.innerHTML = '<em>Glissez-déposez</em> ou <em>cliquez</em> dans la zone pour sélectionner une autre image</p>';
+            selectOtherParagraph.innerHTML = text_second_invite;
 
             infoParagraph.id = "info_p";
             infoParagraph.updateInfo = function() {
