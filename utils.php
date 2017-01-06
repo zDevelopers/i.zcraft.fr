@@ -119,6 +119,11 @@ function delete_image_if_expired($image, $root)
  */
 function extract_image_name($image)
 {
+    if (strpos($image, 'mini_') !== false)
+    {
+        $image = str_replace('mini_', '', $image);
+    }
+
     if (strpos($image, '/') !== false)
     {
         return array_pop(explode('/', $image));
