@@ -1,6 +1,12 @@
 'use strict';
 
 document.addEventListener("DOMContentLoaded", function() {
+
+    document.body.className = "preload js";
+    window.addEventListener("load", function() {
+        document.body.className = "js";
+    });
+
     (function setupFileUpload() {
         var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
         var fileLabel = document.getElementById("file");
@@ -36,7 +42,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if(!(fileLabel && fileInput && selectParagraph && submitInput && deletionSelect && deletionCheckbox)) return;
 
-        document.body.className = "js";
         fileInput.addEventListener("change", updateForm);
         submitInput.parentNode.replaceChild(buttonFieldset, submitInput);
         optionsButton.textContent = "🔧";
@@ -237,7 +242,10 @@ document.addEventListener("DOMContentLoaded", function() {
         open: function()
         {
             document.body.appendChild(Dropdown.element);
-            Dropdown.element.className = "visible";
+            setTimeout(function() {
+                Dropdown.element.className = "visible";
+            });
+
             if(Dropdown._timeoutId)
                 clearTimeout(Dropdown._timeoutId);
         },
