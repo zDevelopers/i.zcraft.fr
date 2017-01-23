@@ -9,15 +9,13 @@ $app = require '../bootstrap.php';
 
 // Routes & controllers ----------------------------------------
 
-$app->get('/', function (Request $request) use ($app)
-{
+$app->get('/', function (Request $request) use ($app) {
     return $app['render']($request, 'index.html.twig', ['config' => $app['config']]);
 })
 ->bind('home');
 
 
-$app->post('/', function (Request $request) use ($app)
-{
+$app->post('/', function (Request $request) use ($app) {
     $file = $request->files->get('image');
 
     if ($file == null) $app->abort(400);
@@ -44,7 +42,7 @@ $app->post('/', function (Request $request) use ($app)
 
     // Upload itself
 
-    $storage_name = mt_rand(100000,999999) . time() . '.' . $file->guessExtension();
+    $storage_name = mt_rand(100000, 999999) . time() . '.' . $file->guessExtension();
     $storage_path = substr($storage_name, 0, 2) . '/' . substr($storage_name, 2, 2) . '/';
     $full_storage_path = $app['config']['storage_dir'] . '/' . $storage_path . $storage_name;
 
@@ -65,7 +63,7 @@ $app->post('/', function (Request $request) use ($app)
         }
 
         // Our fallback only supports JPEG images :c
-        else if ($mime_type == 'image/jpeg')
+        elseif ($mime_type == 'image/jpeg')
         {
             // First we fix the orientation, if needed.
             fix_image_orientation($full_storage_path);
@@ -92,7 +90,7 @@ $app->post('/', function (Request $request) use ($app)
         shell_exec('convert ' . $full_storage_path . ' -resize \'' . $thmb_size . 'x' . $thmb_size . '>\' ' . $mini_path);
         $resized = true;
     }
-    else if (in_array($mime_type, ['image/png', 'image/jpeg', 'image/gif']))
+    elseif (in_array($mime_type, ['image/png', 'image/jpeg', 'image/gif']))
     {
         $resized = make_thumbnail($full_storage_path, $mini_path, $thmb_size);
     }
@@ -153,8 +151,7 @@ $app->post('/', function (Request $request) use ($app)
 ->bind('upload');
 
 
-$app->get('/delete/{token}', function (Request $request, $token) use ($app)
-{
+$app->get('/delete/{token}', function (Request $request, $token) use ($app) {
     $db = load_db();
     $image = null;
 
@@ -182,8 +179,7 @@ $app->get('/delete/{token}', function (Request $request, $token) use ($app)
 ->bind('delete');
 
 
-$app->error(function (\Exception $e, Request $request, $code) use ($app)
-{
+$app->error(function (\Exception $e, Request $request, $code) use ($app) {
     $template = null;
 
     switch ($code)

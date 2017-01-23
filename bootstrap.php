@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use \Twig_Error_Loader;
 
-
 $app = new Silex\Application();
 
 
@@ -71,8 +70,7 @@ if (file_exists('config.php')) $app['config'] = array_merge($app['config'], incl
  *
  * @return Response
  */
-$app['render'] = $app->protect(function(Request $request, $template_name, array $context = array(), $http_code = 200) use($app)
-{
+$app['render'] = $app->protect(function (Request $request, $template_name, array $context = array(), $http_code = 200) use ($app) {
     $user_agent = strtolower(trim($request->headers->get('User-Agent', '')));
     $plain_text = false;
 
@@ -85,7 +83,8 @@ $app['render'] = $app->protect(function(Request $request, $template_name, array 
             $template = $app['twig']->load('cli/' . str_replace('.html.twig', '.cli.twig', $template_name));
             $plain_text = true;
         }
-        catch (Twig_Error_Loader $e) {}
+        catch (Twig_Error_Loader $e) {
+        }
     }
 
     if ($template == null)
