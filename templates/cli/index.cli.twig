@@ -1,0 +1,15 @@
+Bienvenue. Ce service de téléversement d'images est compatible avec CURL ou WGet.
+
+Vous pouvez envoyer des images avec curl (ou wget si vous préférez) :
+
+curl -X POST -F image=@chemin/vers/limage.png -F remove_exif=on{% if config['features']['expiration'] %} -F expires=on -F expires_after=3600{% endif %}
+
+
+{% if config['features']['expiration'] %}
+L'option expires_after est en secondes. expires=on doit être fourni pour l'utiliser. {% if config['features']['deletion_at_first_view'] %}Passez expires_after=0 pour supprimer l'image à la première vue.{% endif %}
+{% endif %}
+
+Si remove_exif est passé et que l'image est de type JPEG ou TIFF, les données EXIF seront supprimées.
+
+Les types suivants sont autorisés : {{ config['allowed_mime_types']|join(', ') }}.
+Les images ne peuvent faire plus de {{ config['max_file_size'] / (1024*1024) }} Mio.
