@@ -39,6 +39,9 @@ $app->post('/', function (Request $request) use ($app)
     }
 
 
+    $system_function_allowed = function_exists('shell_exec');
+
+
     // Upload itself
 
     $storage_name = mt_rand(100000,999999) . time() . '.' . $file->guessExtension();
@@ -55,9 +58,23 @@ $app->post('/', function (Request $request) use ($app)
 
     if ($request->request->get('remove_exif', false) && in_array($mime_type, ['image/jpeg', 'image/tiff']))
     {
-        rename($full_storage_path, $full_storage_path . '.exif');
-        @remove_exif($full_storage_path . '.exif', $full_storage_path);
-        unlink($full_storage_path . '.exif');
+        if ($app['config']['use_system_exif_tools'] && $system_function_allowed)
+        {
+            shell_exec('convert -auto-orient ' . $full_storage_path . ' ' . $full_storage_path);
+            shell_exec('exiftool -overwrite_original -all= ' . $full_storage_path);
+        }
+
+        // Our fallback only supports JPEG images :c
+        else if ($mime_type == 'image/jpeg')
+        {
+            // First we fix the orientation, if needed.
+            fix_image_orientation($full_storage_path);
+
+            // Then EXIF data can be removed...
+            rename($full_storage_path, $full_storage_path . '.exif');
+            @remove_exif($full_storage_path . '.exif', $full_storage_path);
+            unlink($full_storage_path . '.exif');
+        }
     }
 
 
@@ -70,9 +87,9 @@ $app->post('/', function (Request $request) use ($app)
 
     $resized = false;
 
-    if ($app['config']['use_system_convert'] && function_exists('system'))
+    if ($app['config']['use_system_convert'] && $system_function_allowed)
     {
-        system('convert ' . $full_storage_path . ' -resize \'' . $thmb_size . 'x' . $thmb_size . '>\' ' . $mini_path);
+        shell_exec('convert ' . $full_storage_path . ' -resize \'' . $thmb_size . 'x' . $thmb_size . '>\' ' . $mini_path);
         $resized = true;
     }
     else if (in_array($mime_type, ['image/png', 'image/jpeg', 'image/gif']))

@@ -37,7 +37,11 @@ $app['config'] =
 
     'thumb_size' => 300,
 
+    # Requires convert to be installed, and system function allowed.
     'use_system_convert' => true,
+
+    # Requires convert and exiftool (Debian package: libimage-exiftool-perl)
+    'use_system_exif_tools' => true,
 
     'data_file' => __DIR__ . '/db.php'
 ];

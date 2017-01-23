@@ -217,27 +217,57 @@ function remove_exif($old, $new)
     $f2 = fopen($new, 'wb');
 
     // Find EXIF marker
-    while (($s = fread($f1, 2))) {
+    while (($s = fread($f1, 2)))
+    {
         $word = unpack('ni', $s)['i'];
-        if ($word == 0xFFE1) {
+        if ($word == 0xFFE1)
+        {
             // Read length (includes the word used for the length)
             $s = fread($f1, 2);
             $len = unpack('ni', $s)['i'];
             // Skip the EXIF info
             fread($f1, $len - 2);
             break;
-        } else {
+        }
+        else
+        {
             fwrite($f2, $s, 2);
         }
     }
 
     // Write the rest of the file
-    while (($s = fread($f1, 4096))) {
+    while (($s = fread($f1, 4096)))
+    {
         fwrite($f2, $s, strlen($s));
     }
 
     fclose($f1);
     fclose($f2);
+}
+
+function fix_image_orientation($filename)
+{
+    $exif = exif_read_data($filename);
+
+    if (!empty($exif['Orientation']))
+    {
+        $image = imagecreatefromjpeg($filename);
+        switch ($exif['Orientation'])
+        {
+            case 3:
+                $image = imagerotate($image, 180, 0);
+                break;
+
+            case 6:
+                $image = imagerotate($image, 90, 0);
+                break;
+
+            case 8:
+                $image = imagerotate($image, -90, 0);
+                break;
+        }
+        imagejpeg($image, $filename);
+    }
 }
 
 function random_string($str_length = 10)
