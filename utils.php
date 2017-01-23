@@ -312,9 +312,11 @@ function format_date_diff($start, $end = null)
     }
 
     $interval = $end->diff($start);
+
+    // adds plurals
     $doPlural = function ($nb, $str) {
-        return $nb>1?$str.'s':$str;
-    }; // adds plurals
+        return $nb > 1 ? $str . 's' : $str;
+    };
 
     $format = array();
     if($interval->y !== 0)
