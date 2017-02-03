@@ -18,22 +18,18 @@ $app->get('/', function (Request $request) use ($app) {
 $app->post('/', function (Request $request) use ($app) {
     $file = $request->files->get('image');
 
-    if ($file == null) $app->abort(400);
-
-    if (!$file->isValid())
+    // Check if the file was upload
+    if ($file == null || !$file->isValid())
     {
         $app->abort(400);
     }
-    else
+    
+    $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
+    if (!in_array($mime_type, $app['config']['allowed_mime_types'])
+        || $file->getClientSize() > $file->getMaxFilesize()
+        || $file->getClientSize() > $app['config']['max_file_size'])
     {
-        $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
-
-        if (!in_array($mime_type, $app['config']['allowed_mime_types'])
-            || $file->getClientSize() > $file->getMaxFilesize()
-            || $file->getClientSize() > $app['config']['max_file_size'])
-        {
-            $app->abort(400);
-        }
+        $app->abort(400);
     }
 
 
