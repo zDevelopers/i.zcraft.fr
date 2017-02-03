@@ -18,13 +18,14 @@ $app->get('/', function (Request $request) use ($app) {
 $app->post('/', function (Request $request) use ($app) {
     $file = $request->files->get('image');
 
-    // Check if the file was upload
+    // Check if the file was uploaded
     if ($file == null || !$file->isValid())
     {
         $app->abort(400);
     }
-    
+
     $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
+
     if (!in_array($mime_type, $app['config']['allowed_mime_types'])
         || $file->getClientSize() > $file->getMaxFilesize()
         || $file->getClientSize() > $app['config']['max_file_size'])
