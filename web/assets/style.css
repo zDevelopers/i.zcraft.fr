@@ -271,7 +271,7 @@ form > * {
     flex: 2;
     align-items: center;
     justify-content: center;
-    
+
     border: dashed 2px transparent;
     border-bottom: 2px #ccc solid;
     border-radius: 0;
@@ -299,7 +299,7 @@ body.dragging #file {
 }
 
 #file #info_p ul {
-    margin: 0 .5em ;
+    margin: 0 .5em;
     list-style-type: none;
     max-width: 90%;
 }
@@ -358,7 +358,7 @@ body.dragging #file {
     left: 0;
     width: 100%;
     padding: .5em;
-    
+
     font-size: .8em;
     color: #888;
 }
@@ -626,7 +626,7 @@ fieldset {
         margin: .5em 1em -.3em 1em;
         font-size: 1.1em;
     }
-    
+
     .warning {
         border-radius: 0;
         align-self: stretch;
@@ -638,7 +638,7 @@ fieldset {
         margin-top: -5px;
         margin-bottom: .5em;
     }
-    
+
     .warning:before, .warning:after {
         display: none;
     }
