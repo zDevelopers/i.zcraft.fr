@@ -83,7 +83,7 @@ h1 a:before {
     height: 96px;
     top: 8px;
     left: 8px;
-    
+
     background: white;
     transform: rotate(-25deg);
     box-shadow: 0 0 5px rgba(0,0,0,.4);
@@ -96,15 +96,14 @@ h1 a:hover:before {
     height: 108px;
     top: 2px;
     left: 2px;
-    
+
     border-color: rgba(63,151,24,1);
 }
 
-
 h2 {
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #3f9718;
-    margin: 1.2em 2em 0 2em;
+    margin: .6em 2em 0 2em;
 }
 
 .linkblock {
@@ -114,6 +113,8 @@ h2 {
     margin: .5em;
     align-items: center;
     box-shadow: 0 0 5px rgba(0,0,0,.1) inset, 0 0 5px rgba(0,0,0,.1), 2px 2px 3px rgba(0,0,0,.1);
+    overflow: hidden;
+    min-height: 2em;
 }
 
 .linkblock p, .linkblock pre {
