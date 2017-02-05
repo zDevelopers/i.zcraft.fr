@@ -19,9 +19,9 @@ class ImageHitCommand extends \Knp\Command\Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $db = load_db();
+        $db = get_db();
         $image_name = extract_image_name($input->getArgument('image'));
-        $image = get_image($db, $image_name);
+        $image = get_image($image_name);
 
         $io = new SymfonyStyle($input, $output);
 
@@ -32,9 +32,9 @@ class ImageHitCommand extends \Knp\Command\Command
         }
 
         // Image deleted at first view?
-        if ($image['expires_at'] == 0 && !(isset($image['deleted']) && $image['deleted']))
+        if ($image['expires_at'] == 0 && !$image['deleted'])
         {
-            save_db(set_image($db, delete_image($image, $this->getSilexApplication()['config']['storage_dir'])));
+            delete_image($image, $this->getSilexApplication()['config']['storage_dir']);
             $io->success('Image ' . $image['storage_name'] . ' was set to be deleted at first view; purged.');
         }
     }

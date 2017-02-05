@@ -19,9 +19,9 @@ class ShowImageCommand extends \Knp\Command\Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $db = load_db();
+        $db = get_db();
         $image_name = extract_image_name($input->getArgument('image'));
-        $image = get_image($db, $image_name);
+        $image = get_image($image_name);
 
         $io = new SymfonyStyle($input, $output);
 

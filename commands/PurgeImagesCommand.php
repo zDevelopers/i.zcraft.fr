@@ -1,6 +1,7 @@
 <?php
 namespace IZcraft\Command;
 
+use PDO;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,25 +19,22 @@ class PurgeImagesCommand extends \Knp\Command\Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $db = load_db();
+        $db = get_db();
         $storage_dir = $this->getSilexApplication()['config']['storage_dir'];
         $deleted = 0;
 
         $io = new SymfonyStyle($input, $output);
+        $q = $db->prepare('SELECT storage_name, storage_path, storage_path_mini FROM images
+                           WHERE deleted = 0 AND expires_at > 0 AND expires_at < strftime(\'%s\', \'now\')');
+        $q->execute();
 
-        foreach ($db['images'] as $index => $image)
+        while ($image = $q->fetch(PDO::FETCH_ASSOC))
         {
-            $updated_image = delete_image_if_expired($image, $storage_dir);
-            if ($updated_image !== false)
-            {
-                $io->text('Deleted expired image ' . $updated_image['storage_name']);
-                $deleted++;
+            delete_image($image, $storage_dir);
 
-                $db['images'][$index] = $updated_image;
-            }
+            $io->text('Deleted expired image ' . $image['storage_name']);
+            $deleted++;
         }
-
-        if ($deleted > 0) save_db($db);
 
         $io->success('Successfully purged ' . $deleted . ' expired image' . ($deleted != 1 ? 's' : '') . '.');
     }

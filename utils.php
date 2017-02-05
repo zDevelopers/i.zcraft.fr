@@ -1,113 +1,62 @@
 <?php
 
 /**
- * Loads the saved data (here, an array).
- * In the file, data is serialized,compressed and encoded in base64.
+ * Opens a connection to the SQLite database and returns this connection.
+ * The connection is only opened once.
  *
- * @return array Stored data
+ * @return PDO SQLite link
  */
-function load_db()
+function get_db()
 {
     global $app; // TODO improve (service?)
+    if (isset($app['db']) && $app['db'] != null)
+        return $app['db'];
+
     $data_file = $app['config']['data_file'];
+    $must_init = !is_file($data_file);
 
-    if (!is_file($data_file))
+    $app['db'] = new PDO('sqlite:' . $app['config']['data_file'], null, null);
+
+    if ($must_init)
     {
-        $db = [];
-    }
-    else
-    {
-        $db = unserialize(gzinflate(base64_decode(substr(file_get_contents($data_file), 8))));
+        $sql = file_get_contents(__DIR__ . '/schema.sql');
+        $app['db']->exec($sql);
     }
 
-    if (!isset($db['images']) || !is_array($db['images'])) $db['images'] = [];
-
-    return $db;
+    return $app['db'];
 }
 
-/**
- * Saves the data in a file.
- * Returns the success of the operation.
- *
- * @param array $data The data to save
- *
- * @return int|boolean False on failure.
- */
-function save_db($data)
-{
-    global $app;
-    return file_put_contents($app['config']['data_file'], '<?php //' . base64_encode(gzdeflate(serialize($data))));
-}
 
 /**
  * Retrieves an image in the database from it's storage name.
  *
  * @return array|boolean The image data or false if not found.
  */
-function get_image($db, $storage_name)
+function get_image($storage_name)
 {
-    foreach ($db['images'] as $image)
-    {
-        if ($storage_name == $image['storage_name'])
-        {
-            return $image;
-        }
-    }
+    $db = get_db();
+    $q = $db->prepare('SELECT * FROM images WHERE storage_name = :name');
+    $q->execute([':name' => $storage_name]);
+    $image = $q->fetch(PDO::FETCH_ASSOC);
 
-    return false;
+    return $image ? $image : false;
 }
 
-/**
- * Saves an image in the database.
- *
- * @param array $db The database.
- * @param array $image The image to save into the database.
- * @return array The new database.
- */
-function set_image($db, $image)
-{
-    foreach ($db['images'] as $index => $db_image)
-    {
-        if ($db_image['storage_name'] == $image['storage_name'])
-        {
-            $db['images'][$index] = $image;
-        }
-    }
-
-    return $db;
-}
 
 /**
  * Deletes an image.
  *
  * @param array $image An array containing the image data.
  * @param string $root The storage root directory.
- * @return The new image data to store into the database.
  */
 function delete_image($image, $root)
 {
     unlink($root . '/' . $image['storage_path']);
     unlink($root . '/' . $image['storage_path_mini']);
 
-    $image['deleted'] = true;
-    return $image;
-}
-
-/**
- * Deletes an image if expired.
- *
- * @param array $image An array containing the image data.
- * @param string $root The storage root directory.
- * @return The new image data, if the image was deleted, or false if nothing was changed.
- */
-function delete_image_if_expired($image, $root)
-{
-    if (!$image['deleted'] && $image['expires_at'] > -1 && $image['expires_at'] != 0 && $image['expires_at'] <= time())
-    {
-        return delete_image($image, $root);
-    }
-
-    else return false;
+    $db = get_db();
+    $q = $db->prepare('UPDATE images SET deleted = 1 WHERE storage_name = :name');
+    $q->execute([':name' => $image['storage_name']]);
 }
 
 
@@ -201,6 +150,7 @@ function make_thumbnail($original_path, $mini_path, $thumb_size)
     return false;
 }
 
+
 /**
  * Removes the EXIF data from the given image,
  * and writes a new image without it at the new
@@ -245,6 +195,13 @@ function remove_exif($old, $new)
     fclose($f2);
 }
 
+
+/**
+ * Fixes the image orientation using EXIF data, if needed.
+ * Updates the image in place.
+ *
+ * @param string $filename The name of the file to be fixed.
+ */
 function fix_image_orientation($filename)
 {
     $exif = exif_read_data($filename);
@@ -266,10 +223,19 @@ function fix_image_orientation($filename)
                 $image = imagerotate($image, -90, 0);
                 break;
         }
+
         imagejpeg($image, $filename);
     }
 }
 
+
+
+/**
+ * Generates and returns a random string of the given length.
+ *
+ * @param int $str_length The string length.
+ * @return string A pseudorandom string.
+ */
 function random_string($str_length = 10)
 {
     $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -278,11 +244,12 @@ function random_string($str_length = 10)
 
     for ($i = 0; $i < $str_length; $i++)
     {
-        $random_string .= $keyspace[rand(0, $len - 1)];
+        $random_string .= $keyspace[mt_rand(0, $len - 1)];
     }
 
     return $random_string;
 }
+
 
 /**
 * A sweet interval formatting, will use the two biggest interval parts.

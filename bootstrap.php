@@ -42,7 +42,7 @@ $app['config'] =
     # Requires convert and exiftool (Debian package: libimage-exiftool-perl)
     'use_system_exif_tools' => true,
 
-    'data_file' => __DIR__ . '/db.php'
+    'data_file' => __DIR__ . '/images.sqlite'
 ];
 
 

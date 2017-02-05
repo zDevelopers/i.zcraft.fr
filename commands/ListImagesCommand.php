@@ -1,6 +1,7 @@
 <?php
 namespace IZcraft\Command;
 
+use PDO;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +22,7 @@ class ListImagesCommand extends \Knp\Command\Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $db = load_db();
+        $db = get_db();
 
         $show_deleted = $input->getOption('show-deleted') != null;
         $show_tokens  = $input->getOption('with-tokens') != null;
@@ -31,17 +32,27 @@ class ListImagesCommand extends \Knp\Command\Command
         $io = new SymfonyStyle($input, $output);
         $table = [];
 
-        foreach ($db['images'] as $image)
-        {
-            if (!$show_deleted && isset($image['deleted']) && $image['deleted']) continue;
-            if (!$this->filter($filter_names, $image['original_name'])) continue;
-            if (!$this->filter($filter_ips, $image['uploaded_by'])) continue;
+        $q = $db->prepare('SELECT COUNT(*) AS count FROM images');
+        $q->execute();
+        $images_count = $q->fetch(PDO::FETCH_ASSOC)['count'];
 
+        $where_clauses = [];
+        $parameters = [];
+
+        if (!$show_deleted) $where_clauses[] = 'deleted = 0';
+        $this->filter($filter_names, 'original_name', $where_clauses, $parameters);
+        $this->filter($filter_ips, 'uploaded_by', $where_clauses, $parameters);
+
+        $q = $db->prepare('SELECT * FROM images' . (!empty($where_clauses) ? ' WHERE ' . implode(' AND ', $where_clauses) : ''));
+        $q->execute($parameters);
+
+        while ($image = $q->fetch(PDO::FETCH_ASSOC))
+        {
             $row = [
                 $image['storage_name'], $image['original_name'],
                 date('d/m/Y H:i:s', $image['uploaded_at']) . ' by ' . $image['uploaded_by'],
                 $image['expires_at'] > -1 ? $image['expires_at'] == 0 ? 'at first view' : date('d/m/Y H:i:s', $image['expires_at']) : 'never',
-                isset($image['deleted']) && $image['deleted'] ? 'yes' : 'no'
+                $image['deleted'] ? 'yes' : 'no'
             ];
 
             if ($show_tokens) $row[] = $image['deletion_token'];
@@ -51,7 +62,7 @@ class ListImagesCommand extends \Knp\Command\Command
 
         if (empty($table))
         {
-            $io->error('No image matched your query. (' . count($db['images']) . ' images total.)');
+            $io->error('No image matched your query. (' . $images_count . ' images total.)');
         }
         else
         {
@@ -59,27 +70,21 @@ class ListImagesCommand extends \Knp\Command\Command
             if ($show_tokens) $header[] = 'Deletion token';
 
             $io->table($header, $table);
-            $io->text(count($table) . ' out of ' . count($db['images']) . ' images total.');
+            $io->text(count($table) . ' out of ' . $images_count . ' images total.');
         }
     }
 
-    private function filter($filter_list, $field)
+    private function filter($filter_list, $field, array &$where_clauses, array &$parameters)
     {
-        $pass = true;
-
         if (!empty($filter_list))
         {
-            $pass = false;
+            $test = [];
             foreach ($filter_list as $item)
             {
-                if (strpos(strtolower($field), strtolower($item)) !== false)
-                {
-                    $pass = true;
-                    break;
-                }
+                $test[] = $field . ' LIKE ?';
+                $parameters[] = '%' . $item . '%';
             }
+            $where_clauses[] = '(' . implode(' OR ', $test) . ')';
         }
-
-        return $pass;
     }
 }

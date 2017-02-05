@@ -127,11 +127,14 @@ $app->post('/', function (Request $request) use ($app) {
 
     // Saves deletion token and expiration
 
-    $db = load_db();
-    $db['images'][] = $image_data;
-
-    save_db($db);
-
+    $db = get_db();
+    $q = $db->prepare('INSERT INTO images (storage_name, storage_path, storage_path_mini, url, url_mini, original_name, '
+                      . 'uploaded_at, uploaded_by, deletion_token, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $q->execute([
+        $image_data['storage_name'], $image_data['storage_path'], $image_data['storage_path_mini'], $image_data['url'],
+        $image_data['url_mini'],  $image_data['original_name'], $image_data['uploaded_at'], $image_data['uploaded_by'],
+        $image_data['deletion_token'], $image_data['expires_at']
+    ]);
 
     // User view
 
@@ -149,27 +152,17 @@ $app->post('/', function (Request $request) use ($app) {
 
 
 $app->get('/delete/{token}', function (Request $request, $token) use ($app) {
-    $db = load_db();
-    $image = null;
+    $db = get_db();
+    $q = $db->prepare('SELECT * FROM images WHERE deletion_token = :token AND deleted = 0');
+    $q->execute([':token' => $token]);
+    $image = $q->fetch(PDO::FETCH_ASSOC);
 
-    if (is_array($db['images']))
-    {
-        $len = count($db['images']);
-        for ($i = 0; $i < $len; $i++)
-        {
-            if ($db['images'][$i]['deletion_token'] != $token || $db['images'][$i]['deleted']) continue;
-
-            $db['images'][$i] = delete_image($db['images'][$i], $app['config']['storage_dir']);
-            $image = $db['images'][$i];
-            break;
-        }
-    }
-
-    save_db($db);
+    if ($image)
+        delete_image($image, $app['config']['storage_dir']);
 
     return $app['render']($request, 'deleted.html.twig',
     [
-        'deleted' => $image != null,
+        'deleted' => (bool) $image,
         'image' => $image
     ], $image != null ? 200 : 404);
 })

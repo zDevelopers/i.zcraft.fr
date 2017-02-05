@@ -5,6 +5,7 @@
 
 static/
 db.php
+/*.sqlite
 
 
 ### PhpStorm ###
@@ -39,7 +40,7 @@ fabric.properties
 
 # *.iml
 # modules.xml
-# .idea/misc.xml 
+# .idea/misc.xml
 # *.ipr
 
 
@@ -102,7 +103,7 @@ GitHub.sublime-settings
 
 # *.iml
 # modules.xml
-# .idea/misc.xml 
+# .idea/misc.xml
 # *.ipr
 
 
