@@ -1,0 +1,19 @@
+L'image a été envoyée avec succès. Vous trouverez les liens ci-dessous.
+
+{{ full_url }}
+{{ mini_url }}
+
+Voici des raccourcis si vous voulez intégrer l'image en BBCode :
+
+[url={{ full_url }}][img]{{ mini_url }}[/img][/url]
+[center][url={{ full_url }}][img]{{ mini_url }}[/img][/url][/center]
+
+Vous pouvez supprimer l'image en accédant à la page :
+
+{{ delete_url }}
+
+{% if image['expires_at'] == 0 %}
+L'image sera automatiquement supprimée à la première vue.
+{% elseif image['expires_at'] > 0 %}
+L'image sera automatiquement supprimée le {{ image['expires_at']|date('d/m/Y à H:i') }}.
+{% endif %}

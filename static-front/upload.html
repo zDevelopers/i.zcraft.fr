@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script type="text/javascript" src="../web/assets/main.js"></script>
+    <link href="../web/assets/style.css" rel="stylesheet" />
+    <title>Hébergeur d'images !</title>
+</head>
+<body id="upload_page">
+    <h1><a href="https://i.zcraft.fr"><img src="../web/assets/logo.png" alt="Zcraft.fr" width="96" height="96"/></a> Téléversement d'images</h1>
+
+    <form action="/index.php" method="post" enctype="multipart/form-data">
+        <div id="file">
+            <p id="select_p"><em>Glissez-déposez</em> ou <em>cliquez</em> pour sélectionner une image</p>
+            <input type="file" name="image" accept="image/*" />
+        </div>
+        <fieldset id="options">
+            <input type="checkbox" id="exif" name="remove_exif" checked />
+            <label for="exif">
+                Supprimer les données personnelles de l'image
+                <em class="description">Supprime les méta-données EXIF des images (informations de géolocalisation, sur l'appareil photo…).</em>
+            </label>
+
+            <input type="checkbox" id="expires" name="expires" />
+            <label for="expires">
+                Supprimer l'image après
+                <select id="expires_after" name="expires_after">
+                    <option value="">10 minutes</option>
+                    <option value="">une heure</option>
+                    <option value="">24 heures</option>
+                    <option value="" selected>une semaine</option>
+                    <option value="">deux semaines</option>
+                    <option value="">un mois</option>
+                    <option value="">six mois</option>
+                    <option value="">un an</option>
+                </select>
+                <em class="description">Supprime automatiquement l'image et sa miniature après le temps spécifié.</em>
+            </label>
+        </fieldset>
+        <input type="submit" value="Envoyer" />
+    </form>
+</body>
+</html>

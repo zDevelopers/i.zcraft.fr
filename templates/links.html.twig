@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block body_attributes %}id="links_page"{% endblock %}
+
+{% block content %}
+{% if image['expires_at'] != -1 %}
+<p class="warning">
+    Attention, cette image sera détruite
+    {% if image['expires_at'] == 0 %}
+        à la première visualisation.
+    {% else %}
+        le {{ image['expires_at']|date('d/m/Y à H:i') }}.
+    {% endif %}
+</p>
+{% endif %}
+
+<h2>Lien direct</h2>
+<div class="linkblock">
+    <p><a href="{{ full_url }}">{{ full_url }}</a></p>
+</div>
+
+<h2>Lien direct, en miniature</h2>
+<div class="linkblock">
+    <p><a href="{{ mini_url }}">{{ mini_url }}</a></p>
+</div>
+
+<h2>Lien forum avec miniature</h2>
+<div class="linkblock">
+    <pre>[url={{ full_url }}][img]{{ mini_url }}[/img][/url]</pre>
+</div>
+
+<h2>Lien forum avec miniature, centré</h2>
+<div class="linkblock">
+    <pre>[center][url={{ full_url }}][img]{{ mini_url }}[/img][/url][/center]</pre>
+</div>
+
+<h2 class="linkdelete-title">Lien de suppression</h2>
+<div class="linkblock linkdelete">
+    <pre>{{ delete_url }}</pre>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    save_image(
+            '{{ image['original_name']|replace('\'', '\\\'') }}',
+            '{{ image['storage_name'] }}',
+            '{{ full_url }}',
+            '{{ mini_url }}',
+            '{{ delete_url }}',
+            {% if image['expires_at'] != -1 %}new Date({{ image['expires_at'] }}){% else %}false{% endif %},
+            new Date({{ image['uploaded_at'] }})
+    );
+</script>
+{% endblock %}

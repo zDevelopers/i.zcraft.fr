@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block document_title %}Erreur {{ code }}{% endblock %}
+{% block page_title %}Erreur {{ code }}{% endblock %}
+
+{% block content %}
+    <div class="error error-{{ code }}">
+        <h2>{% block error_title %}Une erreur est survenue.{% endblock %}</h2>
+        <p>{% block error_message %}{% endblock %}</p>
+    </div>
+{% endblock %}
