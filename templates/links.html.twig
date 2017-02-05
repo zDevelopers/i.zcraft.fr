@@ -3,6 +3,17 @@
 {% block body_attributes %}id="links_page"{% endblock %}
 
 {% block content %}
+{% if image['expires_at'] != -1 %}
+<p class="warning">
+    Attention, cette image sera détruite
+    {% if image['expires_at'] == 0 %}
+        à la première visualisation.
+    {% else %}
+        le {{ image['expires_at']|date('d/m/Y à H:i') }}.
+    {% endif %}
+</p>
+{% endif %}
+
 <h2>Lien direct</h2>
 <div class="linkblock">
     <p><a href="{{ full_url }}">{{ full_url }}</a></p>
