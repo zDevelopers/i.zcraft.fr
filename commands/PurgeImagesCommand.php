@@ -7,7 +7,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-
 class PurgeImagesCommand extends \Knp\Command\Command
 {
     protected function configure()

@@ -1,13 +1,14 @@
 'use strict';
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
     document.body.className = "preload js";
-    window.addEventListener("load", function() {
+    window.addEventListener("load", function () {
         document.body.className = "js";
     });
 
-    (function setupFileUpload() {
+    (function setupFileUpload()
+    {
         var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
         var fileLabel = document.getElementById("file");
         var fileInput = document.querySelector('#file input[type="file"]');
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
         submitInput.parentNode.replaceChild(buttonFieldset, submitInput);
         optionsButton.textContent = "🔧";
         optionsButton.id = "optionsButton";
-        optionsButton.addEventListener("click", function(e) {
+        optionsButton.addEventListener("click", function (e) {
             getDrawer("options").open = true;
             Dropdown.open();
             e.preventDefault();
@@ -58,16 +59,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
         updateForm();
 
-        function preventDrop(e) {
+        function preventDrop(e)
+        {
             if(e.target === fileInput) return;
             e.dataTransfer.dropEffect = 'none';
         }
-        function dragStart(e) {
+        function dragStart(e)
+        {
             ++dragStatus;
             document.body.classList.add('dragging');
         }
 
-        function dragStop(e) {
+        function dragStop(e)
+        {
             --dragStatus;
             if(dragStatus == 0) {
                 document.body.classList.remove('dragging');
@@ -81,11 +85,12 @@ document.addEventListener("DOMContentLoaded", function() {
         document.documentElement.addEventListener("dragleave", dragStop);
         fileInput.addEventListener("change", dragStop);
 
-        deletionSelect.addEventListener("change", function(e) {
+        deletionSelect.addEventListener("change", function (e) {
             deletionCheckbox.checked = true;
         });
 
-        function updateForm() {
+        function updateForm()
+        {
             if(fileInput.files && fileInput.files[0]) {
                 if(selectParagraph.parentNode) {
                     selectParagraph.parentNode.removeChild(selectParagraph);
@@ -97,7 +102,8 @@ document.addEventListener("DOMContentLoaded", function() {
             infoParagraph.updateInfo();
         }
 
-        function makeInfoParagraph() {
+        function makeInfoParagraph()
+        {
             var infoParagraph = document.createElement("p");
 
             var previewContainer = infoParagraph.appendChild(document.createElement("figure"));
@@ -110,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
             selectOtherParagraph.innerHTML = text_second_invite;
 
             infoParagraph.id = "info_p";
-            infoParagraph.updateInfo = function() {
+            infoParagraph.updateInfo = function () {
                 fileNameInfo.innerHTML = "";
                 fileNameInfo.appendChild(document.createTextNode(fileInput.value));
                 if(fileInput.files && fileInput.files[0]) {
@@ -131,7 +137,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     if(validFileType) {
                         var reader = new FileReader();
-                        reader.onload = function(e) {previewImage.src = e.target.result;};
+                        reader.onload = function (e) {
+                            previewImage.src = e.target.result;};
                         reader.readAsDataURL(selectedFile);
                     } else {
                         previewImage.removeAttribute("src");
@@ -149,7 +156,8 @@ document.addEventListener("DOMContentLoaded", function() {
             return infoParagraph;
         }
 
-        function beautifySize(size) {
+        function beautifySize(size)
+        {
             var units = ['octets', 'Kio', 'Mio', 'Gio', 'Tio'];
             var currentUnit = 0;
 
@@ -162,8 +170,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     })();
 
-    (function setupClipboardActions() {
-        function selectText(element) {
+    (function setupClipboardActions()
+    {
+        function selectText(element)
+        {
             var doc = document, range, selection;
 
             if (doc.body.createTextRange) {
@@ -186,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function() {
             button.textContent = "📋";
             button.title = "Copier dans le presse-papiers";
 
-            button.addEventListener("click", function(button) {
+            button.addEventListener("click", function (button) {
                 var copyBuffer = document.body.appendChild(document.createElement("textarea"));
                 var button = button.target;
                 copyBuffer.className = "copy-buffer";
@@ -210,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 button.className = "tooltip-visible";
                 if(button.timeoutId) clearTimeout(button.timeoutId);
-                button.timeoutId = setTimeout(function() {
+                button.timeoutId = setTimeout(function () {
                     button.className = "";
                 }, 2000);
 
@@ -218,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
 
-            linkblock.firstElementChild.addEventListener("click", function(e) {
+            linkblock.firstElementChild.addEventListener("click", function (e) {
                 selectText(e.target);
             });
         }
@@ -233,16 +243,14 @@ document.addEventListener("DOMContentLoaded", function() {
         element: document.createElement("div"),
         _timeoutId: null,
 
-        init: function()
-        {
+        init: function () {
             Dropdown.element.id = Dropdown.id;
             Dropdown.element.addEventListener("click", closeAll);
         },
 
-        open: function()
-        {
+        open: function () {
             document.body.appendChild(Dropdown.element);
-            setTimeout(function() {
+            setTimeout(function () {
                 Dropdown.element.className = "visible";
             });
 
@@ -250,14 +258,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 clearTimeout(Dropdown._timeoutId);
         },
 
-        close: function()
-        {
+        close: function () {
             Dropdown.element.className = "";
             Dropdown._timeoutId = setTimeout(Dropdown._onAnimationEnd, Dropdown.timeout);
         },
 
-        _onAnimationEnd: function()
-        {
+        _onAnimationEnd: function () {
             document.body.removeChild(Dropdown.element);
             Dropdown._timeoutId = null;
         }
@@ -272,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 || console.error("Invalid drawer id: %s", this.id);
         },
 
-        new: function(drawer_id) {
+        new: function (drawer_id) {
             var obj = Object.create(this);
             obj.id = drawer_id;
             return obj;
@@ -384,8 +390,7 @@ function get_images()
         }
     }
 
-    images.sort(function(a, b)
-    {
+    images.sort(function (a, b) {
         var date_a = new Date(a['uploaded_at']);
         var date_b = new Date(b['uploaded_at']);
 

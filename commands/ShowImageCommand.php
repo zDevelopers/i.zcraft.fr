@@ -7,7 +7,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-
 class ShowImageCommand extends \Knp\Command\Command
 {
     protected function configure()
@@ -38,10 +37,12 @@ class ShowImageCommand extends \Knp\Command\Command
         $expires = '';
         switch ($image['expires_at']) {
             case -1:
-                $expires = 'never'; break;
+                $expires = 'never';
+                break;
 
             case 0:
-                $expires = 'at first view'; break;
+                $expires = 'at first view';
+                break;
 
             default:
                 $expires  = $image['expires_at'] < time() ? 'already expired ' : '';

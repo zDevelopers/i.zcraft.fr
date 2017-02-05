@@ -9,39 +9,37 @@ $app = require '../bootstrap.php';
 
 // Routes & controllers ----------------------------------------
 
-$app->get('/', function () use ($app)
-{
-    return $app['twig']->render('index.html.twig', ['config' => $app['config']]);
+$app->get('/', function (Request $request) use ($app) {
+    return $app['render']($request, 'index.html.twig', ['config' => $app['config']]);
 })
 ->bind('home');
 
 
-$app->post('/', function (Request $request) use ($app)
-{
+$app->post('/', function (Request $request) use ($app) {
     $file = $request->files->get('image');
 
-    if ($file == null) $app->abort(400);
-
-    if (!$file->isValid())
+    // Check if the file was uploaded
+    if ($file == null || !$file->isValid())
     {
         $app->abort(400);
     }
-    else
-    {
-        $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
 
-        if (!in_array($mime_type, $app['config']['allowed_mime_types'])
-            || $file->getClientSize() > $file->getMaxFilesize()
-            || $file->getClientSize() > $app['config']['max_file_size'])
-        {
-            $app->abort(400);
-        }
+    $mime_type = $file->getMimeType(); // Cannot be accessed after $file->move()
+
+    if (!in_array($mime_type, $app['config']['allowed_mime_types'])
+        || $file->getClientSize() > $file->getMaxFilesize()
+        || $file->getClientSize() > $app['config']['max_file_size'])
+    {
+        $app->abort(400);
     }
+
+
+    $system_function_allowed = function_exists('shell_exec');
 
 
     // Upload itself
 
-    $storage_name = mt_rand(100000,999999) . time() . '.' . $file->guessExtension();
+    $storage_name = mt_rand(100000, 999999) . time() . '.' . $file->guessExtension();
     $storage_path = substr($storage_name, 0, 2) . '/' . substr($storage_name, 2, 2) . '/';
     $full_storage_path = $app['config']['storage_dir'] . '/' . $storage_path . $storage_name;
 
@@ -53,11 +51,25 @@ $app->post('/', function (Request $request) use ($app)
 
     // EXIF deletion
 
-    if ($request->request->get('exif', false) && in_array($mime_type, ['image/jpeg', 'image/tiff']))
+    if ($request->request->get('remove_exif', false) && in_array($mime_type, ['image/jpeg', 'image/tiff']))
     {
-        rename($full_storage_path, $full_storage_path . '.exif');
-        @remove_exif($full_storage_path . '.exif', $full_storage_path);
-        unlink($full_storage_path . '.exif');
+        if ($app['config']['use_system_exif_tools'] && $system_function_allowed)
+        {
+            shell_exec('convert -auto-orient ' . $full_storage_path . ' ' . $full_storage_path);
+            shell_exec('exiftool -overwrite_original -all= ' . $full_storage_path);
+        }
+
+        // Our fallback only supports JPEG images :c
+        elseif ($mime_type == 'image/jpeg')
+        {
+            // First we fix the orientation, if needed.
+            fix_image_orientation($full_storage_path);
+
+            // Then EXIF data can be removed...
+            rename($full_storage_path, $full_storage_path . '.exif');
+            @remove_exif($full_storage_path . '.exif', $full_storage_path);
+            unlink($full_storage_path . '.exif');
+        }
     }
 
 
@@ -70,12 +82,12 @@ $app->post('/', function (Request $request) use ($app)
 
     $resized = false;
 
-    if ($app['config']['use_system_convert'] && function_exists('system'))
+    if ($app['config']['use_system_convert'] && $system_function_allowed)
     {
-        system('convert ' . $full_storage_path . ' -resize \'' . $thmb_size . 'x' . $thmb_size . '>\' ' . $mini_path);
+        shell_exec('convert ' . $full_storage_path . ' -resize \'' . $thmb_size . 'x' . $thmb_size . '>\' ' . $mini_path);
         $resized = true;
     }
-    else if (in_array($mime_type, ['image/png', 'image/jpeg', 'image/gif']))
+    elseif (in_array($mime_type, ['image/png', 'image/jpeg', 'image/gif']))
     {
         $resized = make_thumbnail($full_storage_path, $mini_path, $thmb_size);
     }
@@ -123,7 +135,7 @@ $app->post('/', function (Request $request) use ($app)
 
     // User view
 
-    return $app['twig']->render('links.html.twig',
+    return $app['render']($request, 'links.html.twig',
     [
         'full_url' => $file_uri,
         'mini_url' => $mini_uri,
@@ -136,8 +148,7 @@ $app->post('/', function (Request $request) use ($app)
 ->bind('upload');
 
 
-$app->get('/delete/{token}', function ($token) use ($app)
-{
+$app->get('/delete/{token}', function (Request $request, $token) use ($app) {
     $db = load_db();
     $image = null;
 
@@ -149,40 +160,23 @@ $app->get('/delete/{token}', function ($token) use ($app)
             if ($db['images'][$i]['deletion_token'] != $token || $db['images'][$i]['deleted']) continue;
 
             $db['images'][$i] = delete_image($db['images'][$i], $app['config']['storage_dir']);
+            $image = $db['images'][$i];
             break;
         }
     }
 
     save_db($db);
 
-    return new Response($app['twig']->render('deleted.html.twig',
+    return $app['render']($request, 'deleted.html.twig',
     [
         'deleted' => $image != null,
         'image' => $image
-    ]), $image != null ? 200 : 404);
+    ], $image != null ? 200 : 404);
 })
 ->bind('delete');
 
 
-/**
- * Debug tool
- */
-$app->get('/db', function () use ($app)
-{
-    if (!$app['debug']) $app->abort(404);
-
-    echo '<pre>';
-    var_dump(load_db());
-    echo '</pre>';
-
-    $dump = ob_get_clean();
-    ob_end_clean();
-    return $dump;
-});
-
-
-$app->error(function (\Exception $e, Request $request, $code) use ($app)
-{
+$app->error(function (\Exception $e, Request $request, $code) use ($app) {
     $template = null;
 
     switch ($code)
@@ -196,7 +190,7 @@ $app->error(function (\Exception $e, Request $request, $code) use ($app)
             $template = 'error';
     }
 
-    return $app['twig']->render($template . '.html.twig', ['code' => $code]);
+    return $app['render']($request, $template . '.html.twig', ['code' => $code]);
 });
 
 $app['debug'] = in_array($_SERVER['SERVER_NAME'], array('0.0.0.0', '127.0.0.1', 'localhost'));
