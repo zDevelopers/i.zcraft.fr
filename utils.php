@@ -51,8 +51,8 @@ function get_image($storage_name)
  */
 function delete_image($image, $root)
 {
-    unlink($root . '/' . $image['storage_path']);
-    unlink($root . '/' . $image['storage_path_mini']);
+    @unlink($root . '/' . $image['storage_path']);
+    @unlink($root . '/' . $image['storage_path_mini']);
 
     $db = get_db();
     $q = $db->prepare('UPDATE images SET deleted = 1 WHERE storage_name = :name');

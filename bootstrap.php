@@ -5,7 +5,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Knp\Provider\ConsoleServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use \Twig_Error_Loader;
 
 $app = new Silex\Application();
 
@@ -16,7 +15,7 @@ $app = new Silex\Application();
 $app['config'] =
 [
     'storage_dir' => __DIR__ . '/web/static',
-    'public_storage_dir' => 'static',
+    'public_storage_dir' => 'static/',  // trailing slash
     'strip_folders' => false,
 
     'allowed_mime_types' => ['image/png', 'image/jpeg', 'image/gif', 'image/bmp', 'image/tiff'],
@@ -61,8 +60,9 @@ $app->register(new ConsoleServiceProvider(), [
     'console.project_directory' => __DIR__ . "/.."
 ]);
 
-if (file_exists('config.php')) $app['config'] = array_merge($app['config'], include('config.php'));
+if (file_exists(__DIR__ . '/config.php')) $app['config'] = array_merge($app['config'], include(__DIR__ . '/config.php'));
 
+date_default_timezone_set('Europe/Paris');
 
 /**
  * Renders a view, but replaces the template with a CLI template if the client is WGet or CURL.
@@ -83,7 +83,7 @@ $app['render'] = $app->protect(function (Request $request, $template_name, array
             $template = $app['twig']->load('cli/' . str_replace('.html.twig', '.cli.twig', $template_name));
             $plain_text = true;
         }
-        catch (Twig_Error_Loader $e) {
+        catch (\Twig_Error_Loader $e) {
         }
     }
 
