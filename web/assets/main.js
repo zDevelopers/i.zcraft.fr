@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function () {
         var deletionCheckbox = document.getElementById("expires");
         var buttonFieldset = document.createElement("fieldset");
         var optionsButton = document.createElement("button");
+        
+        if(!(fileLabel && fileInput && selectParagraph && submitInput && deletionSelect && deletionCheckbox)) return;
 
         var text_second_invite = '<em>Glissez-déposez</em> ou <em>cliquez</em> dans la zone pour sélectionner une autre image.';
         if (width < 721) {
@@ -40,8 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
         var validFileType = false;
         var validFileSize = false;
         var dragStatus = 0;
-
-        if(!(fileLabel && fileInput && selectParagraph && submitInput && deletionSelect && deletionCheckbox)) return;
 
         fileInput.addEventListener("change", updateForm);
         submitInput.parentNode.replaceChild(buttonFieldset, submitInput);

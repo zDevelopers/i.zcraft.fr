@@ -57,7 +57,7 @@ h1 {
 }
 
 #links_page h1 {
-    margin-bottom: 0.25em;
+    margin-bottom: 5px;
 }
 
 h1 a {
@@ -108,6 +108,32 @@ h2 {
     font-size: 1.1em;
     color: #3f9718;
     margin: .6em 2em 0 2em;
+}
+
+.warning {
+    text-align: center;
+    align-self: center;
+    padding: .25em 0;
+    border: solid 1px #cb1313;
+    box-shadow: 0 0 7px rgba(0,0,0,.2), 2px 2px 5px rgba(0,0,0,.2);
+    color: #cb1313;
+    border-radius: 5px;
+    margin-bottom: 0;/*
+    text-align: center;
+    padding: .5em 2em;
+    color: #cb1313;
+    color: white;
+    background: #cb1313;
+    margin-top: -5px;
+    margin-bottom: 0;*/
+}
+
+.warning:before, .warning:after {
+    font-family: monospace;
+    content: "!";
+    font-weight: bold;
+    margin: -.25em 1em;
+    font-size: 22px;
 }
 
 .linkblock {
@@ -599,8 +625,24 @@ fieldset {
     }
 
     h2 {
-        margin: .5em 1em 0 1em;
+        margin: .5em 1em -.3em 1em;
         font-size: 1.1em;
+    }
+    
+    .warning {
+        border-radius: 0;
+        align-self: stretch;
+        text-align: center;
+        padding: .7em 24px .5em 48px;
+        color: #cb1313;
+        color: white;
+        background: #cb1313;
+        margin-top: -5px;
+        margin-bottom: .5em;
+    }
+    
+    .warning:before, .warning:after {
+        display: none;
     }
 
     #file {
@@ -627,7 +669,7 @@ fieldset {
 }
 
 @media (max-width: 350px) {
-    h2 {
+    h2, .warning {
         font-size: 5vw;
     }
 
