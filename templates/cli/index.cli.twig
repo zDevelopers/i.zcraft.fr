@@ -2,7 +2,7 @@ Bienvenue. Ce service de téléversement d'images est compatible avec CURL ou WG
 
 Vous pouvez envoyer des images avec curl (ou wget si vous préférez) :
 
-curl -X POST -F image=@chemin/vers/limage.png -F remove_exif=on{% if config['features']['expiration'] %} -F expires=on -F expires_after=3600{% endif %}
+curl -X POST -F image=@chemin/vers/limage.png -F remove_exif=on{% if config['features']['expiration'] %} -F expires=on -F expires_after=3600{% endif %} {{ url('upload') }}
 
 
 {% if config['features']['expiration'] %}
