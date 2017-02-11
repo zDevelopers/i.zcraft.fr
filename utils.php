@@ -331,3 +331,18 @@ function format_date_diff($start, $end = null)
 
     return $interval->format($format);
 }
+
+/**
+ * Returns an human-readable filesize from a bytes cout.
+ *
+ * Inspiration from https://php.net/manual/en/function.filesize.php#106569
+ *
+ * @param int $bytes The bytes count.
+ * @param int $decimals The decimals wanted in the final result.
+ * @return string Human-readable size with unit.
+ */
+function human_filesize($bytes, $decimals = 2) {
+    $sz = ['o', 'Kio', 'Mio', 'Gio', 'Tio', 'Pio'];
+    $factor = floor((strlen($bytes) - 1) / 3);
+    return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . @$sz[$factor];
+}

@@ -50,9 +50,22 @@ class ShowImageCommand extends \Knp\Command\Command
                 $expires .= format_date_diff(new \DateTime(), new \DateTime('@'.$image['expires_at'])) . ($image['expires_at'] < time() ? ' ago' : '');
         }
 
+        $size = 'N/A';
+        if (!$image['deleted'])
+        {
+            $size_original  = filesize($this->getSilexApplication()['config']['storage_dir'] . '/' . $image['storage_path']);
+            $size_thumbnail = filesize($this->getSilexApplication()['config']['storage_dir'] . '/' . $image['storage_path_mini']);
+            if ($size_original !== false)
+            {
+                $size_total = $size_original + ($size_thumbnail !== false ? $size_thumbnail : 0);
+                $size = human_filesize($size_total) . ' (original: ' . human_filesize($size_original) . '; thumbnail: ' . ($size_thumbnail !== false ? human_filesize($size_thumbnail) : 'N/A') . ')';
+            }
+        }
+
         $io->table([], [
             ['<info>Name</>', $image['storage_name']],
             ['<info>Original name</>', $image['original_name']],
+            ['<info>Files size</>', $size],
             ['<info>Storage path</>', $this->getSilexApplication()['config']['storage_dir'] . '/' . $image['storage_path']],
             ['<info>Thumbnail path</>', $this->getSilexApplication()['config']['storage_dir'] . '/' . $image['storage_path_mini']],
             ['<info>URL</>', $image['url']],
