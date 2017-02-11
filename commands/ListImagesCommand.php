@@ -17,6 +17,8 @@ class ListImagesCommand extends \Knp\Command\Command
              ->addOption('show-deleted', null, InputOption::VALUE_NONE, 'Pass to display deleted images.')
              ->addOption('with-tokens', null, InputOption::VALUE_NONE, 'Pass to display deletion tokens.')
              ->addOption('with-sizes', null, InputOption::VALUE_NONE, 'Pass to display files sizes.')
+             ->addOption('before', null, InputOption::VALUE_REQUIRED, 'Displays images uploaded before the given date. Format: yyyy-mm-dd, "x days/months/years ago", and others supported by strtotime.')
+             ->addOption('after', null, InputOption::VALUE_REQUIRED, 'Displays images uploaded after the given date. Format: see --before.')
              ->addOption('in-name', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Filters the original files names. Multiple values will be ORed.', [])
              ->addOption('from-ip', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Filters by uploader IP address.  Multiple values will be ORed.', []);
     }
@@ -28,6 +30,8 @@ class ListImagesCommand extends \Knp\Command\Command
         $show_deleted = $input->getOption('show-deleted') != null;
         $show_tokens  = $input->getOption('with-tokens') != null;
         $show_sizes   = $input->getOption('with-sizes') != null;
+        $before       = $input->getOption('before') != null ? strtotime($input->getOption('before')) : false;
+        $after        = $input->getOption('after') != null ? strtotime($input->getOption('after')) : false;
         $filter_names = $input->getOption('in-name');
         $filter_ips   = $input->getOption('from-ip');
 
@@ -42,6 +46,17 @@ class ListImagesCommand extends \Knp\Command\Command
         $parameters = [];
 
         if (!$show_deleted) $where_clauses[] = 'deleted = 0';
+        if ($before !== false)
+        {
+            $where_clauses[] = 'uploaded_at <= ?';
+            $parameters[] = $before;
+        }
+        if ($after !== false)
+        {
+            $where_clauses[] = 'uploaded_at >= ?';
+            $parameters[] = $after;
+        }
+
         $this->filter($filter_names, 'original_name', $where_clauses, $parameters);
         $this->filter($filter_ips, 'uploaded_by', $where_clauses, $parameters);
 
