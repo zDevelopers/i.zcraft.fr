@@ -9,12 +9,18 @@ $app = require '../bootstrap.php';
 
 // Routes & controllers ----------------------------------------
 
+/*
+ * Front page (upload form)
+ */
 $app->get('/', function (Request $request) use ($app) {
     return $app['render']($request, 'index.html.twig', ['config' => $app['config']]);
 })
 ->bind('home');
 
 
+/*
+ * Upload processing + links page
+ */
 $app->post('/', function (Request $request) use ($app) {
     $file = $request->files->get('image');
 
@@ -151,6 +157,9 @@ $app->post('/', function (Request $request) use ($app) {
 ->bind('upload');
 
 
+/*
+ * Deletion links processing
+ */
 $app->get('/delete/{token}', function (Request $request, $token) use ($app) {
     $db = get_db();
     $q = $db->prepare('SELECT * FROM images WHERE deletion_token = :token AND deleted = 0');
@@ -169,6 +178,34 @@ $app->get('/delete/{token}', function (Request $request, $token) use ($app) {
 ->bind('delete');
 
 
+/*
+ * API endpoint to check if an image is deleted without triggering
+ * first-view deletion. This only displays the status, and cannot
+ * be used to access the image without triggering the deletion
+ * (for images deleted at first view). Returns a 404 if there
+ * was no such image.
+ *
+ * Endpoint: /api/exists?i=image_name.png
+ * Returns JSON: {'storage_name': '<image storage name>', 'deleted': true/false}
+ */
+$app->get('/api/exists', function(Request $request) use ($app) {
+    if (!$request->query->has('i'))
+        $app->abort(400);
+
+    $image = get_image(extract_image_name($request->query->get('i')));
+    if ($image === false)
+        $app->abort(404);
+
+    return $app->json([
+        'storage_name' => $image['storage_name'],
+        'deleted'      => (bool) $image['deleted']
+    ]);
+});
+
+
+/**
+ * Errors pages controller
+ */
 $app->error(function (\Exception $e, Request $request, $code) use ($app) {
     $template = null;
 
@@ -185,6 +222,7 @@ $app->error(function (\Exception $e, Request $request, $code) use ($app) {
 
     return $app['render']($request, $template . '.html.twig', ['code' => $code]);
 });
+
 
 $app['debug'] = in_array($_SERVER['SERVER_NAME'], array('0.0.0.0', '127.0.0.1', 'localhost'));
 $app->run();
