@@ -16,10 +16,12 @@ document.addEventListener("DOMContentLoaded", function () {
         var selectParagraph = document.getElementById("select_p");
         var deletionSelect = document.getElementById("expires_after");
         var deletionCheckbox = document.getElementById("expires");
-        var buttonFieldset = document.createElement("fieldset");
+        var optionsFieldset = document.getElementById("options");
+        var buttonFieldset = document.createElement("div");
         var optionsButton = document.createElement("button");
+        var closeButton = document.createElement("button");
         
-        if(!(fileLabel && fileInput && selectParagraph && submitInput && deletionSelect && deletionCheckbox)) return;
+        if(!(fileLabel && fileInput && selectParagraph && submitInput && deletionSelect && deletionCheckbox && optionsFieldset)) return;
 
         var text_second_invite = '<em>Glissez-déposez</em> ou <em>cliquez</em> dans la zone pour sélectionner une autre image.';
         if (width < 721) {
@@ -56,6 +58,15 @@ document.addEventListener("DOMContentLoaded", function () {
         buttonFieldset.appendChild(optionsButton);
         buttonFieldset.appendChild(submitInput);
         buttonFieldset.id = "buttons";
+        closeButton.textContent = "Valider";
+        closeButton.addEventListener("click", function(e) {
+            getDrawer("options").open = false;
+            Dropdown.close();
+            e.preventDefault();
+            return false;
+        });
+        closeButton.id = "closeButton";
+        optionsFieldset.appendChild(closeButton);
 
         updateForm();
 
@@ -118,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
             infoParagraph.id = "info_p";
             infoParagraph.updateInfo = function () {
                 fileNameInfo.innerHTML = "";
-                fileNameInfo.appendChild(document.createTextNode(fileInput.value));
                 if(fileInput.files && fileInput.files[0]) {
                     var selectedFile = fileInput.files[0];
                     var maxFileSize = parseInt(fileInput.dataset.maxsize);
@@ -126,6 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     validFileSize = selectedFile.size <= maxFileSize;
                     validFileType = selectedFile.type.substr(0, 6) == "image/";
 
+                    fileNameInfo.appendChild(document.createTextNode(selectedFile.name));
                     fileTypeInfo.innerHTML = "Fichier <code>" + (selectedFile.type || "Inconnu");
                     fileSizeInfo.innerHTML = beautifySize(selectedFile.size);
 
@@ -149,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     else {submitInput.value = "Envoyer";}
                 } else {
                     submitInput.disabled = true;
-                    submitInput.value = "Sélectionnez un fichier";
+                    submitInput.value = "Aucun fichier sélectionné";
                 }
 
             };

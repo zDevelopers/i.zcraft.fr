@@ -10,7 +10,7 @@
 	</div>
 
 
-	<fieldset id="options">
+	<div id="options">
 		<input type="checkbox" id="exif" name="remove_exif" checked />
 		<label for="exif">
 		    Supprimer les données personnelles de l'image
@@ -35,7 +35,7 @@
 		    <em class="description">Supprime automatiquement l'image et sa miniature après le temps spécifié.</em>
 		</label>
 		{% if not config['features']['expiration'] %}</div>{% endif %}
-	</fieldset>
+	</div>
 
 	<input type="submit" value="Envoyer" />
 </form>
