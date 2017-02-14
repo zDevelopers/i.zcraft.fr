@@ -50,8 +50,9 @@ $app->post('/', function (Request $request) use ($app) {
     $full_storage_path = $app['config']['storage_dir'] . '/' . $storage_path . $storage_name;
 
     $stored_file = $file->move($app['config']['storage_dir'] . '/' . $storage_path, $storage_name);
-
-    $base_uri = $request->getURI() . $app['config']['public_storage_dir'] . (!$app['config']['strip_folders'] ? $storage_path : '');
+    $base_uri = $request->getSchemeAndHttpHost() . $request->getBasePath() . '/'
+                                                 . $app['config']['public_storage_dir']
+                                                 . (!$app['config']['strip_folders'] ? $storage_path : '');
     $file_uri = $base_uri . $storage_name;
 
 
