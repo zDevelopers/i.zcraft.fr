@@ -464,18 +464,18 @@ select {
     bottom: 1px;
 }
 
-form > input[type="submit"], fieldset#buttons {
+form > input[type="submit"], #buttons {
     display: block;
     margin: 2% 5%;
 }
 
-fieldset#buttons {
+#buttons {
     display: flex;
     align-content: center;
     margin: 2% 0;
 }
 
-fieldset#buttons button, input[type="submit"] {
+#buttons button, #options button, input[type="submit"] {
     border: solid 1px transparent;
     border-radius: 5px;
     padding: .2em .7em;
@@ -487,9 +487,9 @@ fieldset#buttons button, input[type="submit"] {
     transition: all .2s ease-in-out;
 }
 
-fieldset#buttons input[type="submit"] {
+#buttons input[type="submit"] {
     flex: 1;
-    width: 100%;
+    width: 96%;
 }
 
 input[type="submit"] {
@@ -506,8 +506,9 @@ input[type="submit"]:hover {
 
 input[type="submit"]:disabled {
     background: white;
-    border-color: #3f9718;
+    border-color: #ccc;
     color: #3f9718;
+    box-shadow: 0 0 7px rgba(0,50,0,.2);
     cursor: default;
 }
 
@@ -527,7 +528,15 @@ input[type="submit"].invalid {
     font-family: izcraft;
 }
 
-fieldset#buttons button:hover {
+#closeButton {
+    display: none;
+
+    background: white;
+    color: #3f9718;
+    border-color: #3f9718 !important;
+}
+
+#buttons button:hover {
     box-shadow: 0 0 8px rgba(0,50,0,.8);
 }
 
@@ -649,11 +658,11 @@ fieldset {
         padding-bottom: .25em;
     }
 
-    fieldset#buttons {
+    #buttons {
         font-size: 28px;
     }
 
-    fieldset#buttons button, input[type="submit"] {
+    #buttons button, input[type="submit"] {
         padding: .2em .3em;
         margin: .5rem;
     }
@@ -681,11 +690,16 @@ fieldset {
         display: block;
     }
 
+    body.js #closeButton {
+        display: block;
+        margin: auto 1em 1em 1em;
+    }
+
     input[type="submit"]:disabled {
         font-size: 4vw;
     }
 
-    body.js fieldset#options:before {
+    body.js #options:before {
         display: block;
         content: "Options";
         background: #3f9718;
@@ -698,7 +712,9 @@ fieldset {
         font-weight: bold;
     }
 
-    body.js fieldset#options {
+    body.js #options {
+        display: flex;
+        flex-direction: column;
         box-shadow: 0 0 30px rgba(0,0,0,.8);
         position: fixed;
         height: 100%;
@@ -714,7 +730,7 @@ fieldset {
         transition: visibility 0 linear;
     }
 
-    body.js fieldset#options.visible {
+    body.js #options.visible {
         visibility: visible;
         transform: translateX(0);
         opacity: 1;
