@@ -7,24 +7,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="shortcut icon" href="{{ global.request.basepath }}/assets/favicon.ico" type="image/x-icon" />
-    <link href="{{ global.request.basepath }}/assets/style.css" rel="stylesheet" />
+    {% if not nocss %}<link href="{{ global.request.basepath }}/assets/style.css" rel="stylesheet" /> {% endif %}
 
     <title>{% block document_title %}Hébergeur d'images !{% endblock %}</title>
 </head>
 
 <body {% block body_attributes %}{% endblock %}>
-    <h1>
-        <a href="{% block head_link %}{{ path('home') }}{% endblock %}">
-            <img src="{{ global.request.basepath }}/assets/logo.png" alt="Zcraft.fr" width="96" height="96" />
-        </a>
-        {% block page_title %}Hébergeur d'images{% endblock -%}
-    </h1>
+    <header>
+        {% if nocss %}
+            <a href="{{ global.request.basepath }}/" title="Version normale (avec CSS)">Version normale</a>
+        {% else %}
+            <a href="{{ global.request.basepath }}/?nocss" title="Version moche (sans CSS)">Version de compatibilité</a>
+        {% endif %}
+    </header>
+    <div id="main-content">
+        <h1>
+            <a href="{% block head_link %}{{ path('home') }}{% endblock %}">
+                <img src="{{ global.request.basepath }}/assets/logo.png" alt="Zcraft.fr" width="96" height="96" />
+            </a>
+            {% block page_title %}Hébergeur d'images{% endblock -%}
+        </h1>
 
-    {% block content %}{% endblock %}
-
-    <script type="text/javascript" src="{{ global.request.basepath }}/assets/main.js"></script>
-
-    {% block javascripts %}{% endblock %}
-
+        {% block content %}{% endblock %}
+    </div>
+    {% if not nocss %}
+        <script type="text/javascript" src="{{ global.request.basepath }}/assets/main.js"></script>
+        {% block javascripts %}{% endblock %}
+    {% endif %}
 </body>
 </html>

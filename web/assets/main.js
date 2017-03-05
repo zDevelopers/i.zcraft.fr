@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         optionsButton.textContent = "🔧";
         optionsButton.id = "optionsButton";
         optionsButton.addEventListener("click", function (e) {
-            getDrawer("options").open = true;
+            getDrawer("options").setOpen(true);
             Dropdown.open();
             e.preventDefault();
             return false;
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
         buttonFieldset.id = "buttons";
         closeButton.textContent = "Valider";
         closeButton.addEventListener("click", function(e) {
-            getDrawer("options").open = false;
+            getDrawer("options").setOpen(false);
             Dropdown.close();
             e.preventDefault();
             return false;
@@ -251,18 +251,18 @@ document.addEventListener("DOMContentLoaded", function () {
     var Dropdown = {
         id: "main-dropdown",
         timeout: 2000,
-        element: document.createElement("div"),
+        getElement: document.createElement("div"),
         _timeoutId: null,
 
         init: function () {
-            Dropdown.element.id = Dropdown.id;
-            Dropdown.element.addEventListener("click", closeAll);
+            Dropdown.getElement.id = Dropdown.id;
+            Dropdown.getElement.addEventListener("click", closeAll);
         },
 
         open: function () {
-            document.body.appendChild(Dropdown.element);
+            document.body.appendChild(Dropdown.getElement);
             setTimeout(function () {
-                Dropdown.element.className = "visible";
+                Dropdown.getElement.className = "visible";
             });
 
             if(Dropdown._timeoutId)
@@ -270,12 +270,12 @@ document.addEventListener("DOMContentLoaded", function () {
         },
 
         close: function () {
-            Dropdown.element.className = "";
+            Dropdown.getElement.className = "";
             Dropdown._timeoutId = setTimeout(Dropdown._onAnimationEnd, Dropdown.timeout);
         },
 
         _onAnimationEnd: function () {
-            document.body.removeChild(Dropdown.element);
+            document.body.removeChild(Dropdown.getElement);
             Dropdown._timeoutId = null;
         }
     };
@@ -283,7 +283,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var NavigationDrawer = {
         id: '',
 
-        get element()
+        getElement: function()
         {
             return document.getElementById(this.id)
                 || console.error("Invalid drawer id: %s", this.id);
@@ -295,14 +295,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return obj;
         },
 
-        get open()
+        getOpen: function()
         {
-            return this.element.className.split(" ").indexOf("visible") >= 0;
+            return this.getElement().className.split(" ").indexOf("visible") >= 0;
         },
 
-        set open(isOpen)
+        setOpen: function(isOpen)
         {
-            this.element.className = isOpen ? "visible" : "";
+            this.getElement().className = isOpen ? "visible" : "";
         }
     };
 
@@ -321,7 +321,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function openDrawer()
     {
-        getDrawer(this.getAttribute("data-drawer")).open = true;
+        getDrawer(this.getAttribute("data-drawer")).setOpen(true);
         Dropdown.open();
     }
 
@@ -329,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function () {
     {
         for(var drawer_id in drawers)
         {
-            drawers[drawer_id].open = false;
+            drawers[drawer_id].setOpen(false);
         }
         Dropdown.close();
     }

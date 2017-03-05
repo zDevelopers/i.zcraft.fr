@@ -1,7 +1,6 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 $app = require '../bootstrap.php';
@@ -13,7 +12,10 @@ $app = require '../bootstrap.php';
  * Front page (upload form)
  */
 $app->get('/', function (Request $request) use ($app) {
-    return $app['render']($request, 'index.html.twig', ['config' => $app['config']]);
+    return $app['render']($request, 'index.html.twig', [
+        'config' => $app['config'],
+        'nocss' => $request->query->has('beurk') ? 'beurk' : ($request->query->has('nocss') ? 'nocss' : null)
+    ]);
 })
 ->bind('home');
 
@@ -49,7 +51,7 @@ $app->post('/', function (Request $request) use ($app) {
     $storage_path = substr($storage_name, 0, 2) . '/' . substr($storage_name, 2, 2) . '/';
     $full_storage_path = $app['config']['storage_dir'] . '/' . $storage_path . $storage_name;
 
-    $stored_file = $file->move($app['config']['storage_dir'] . '/' . $storage_path, $storage_name);
+    $file->move($app['config']['storage_dir'] . '/' . $storage_path, $storage_name);
     $base_uri = $request->getSchemeAndHttpHost() . $request->getBasePath() . '/'
                                                  . $app['config']['public_storage_dir']
                                                  . (!$app['config']['strip_folders'] ? $storage_path : '');
@@ -152,7 +154,8 @@ $app->post('/', function (Request $request) use ($app) {
         'delete_url' => $app['url_generator']->generate('delete', ['token' => $deletion_token], UrlGeneratorInterface::ABSOLUTE_URL),
         'deletion_token' => $deletion_token,
         'image' => $image_data,
-        'config' => $app['config']
+        'config' => $app['config'],
+        'nocss' => $request->query->has('beurk') ? 'beurk' : ($request->query->has('nocss') ? 'nocss' : null)
     ]);
 })
 ->bind('upload');
@@ -173,7 +176,8 @@ $app->get('/delete/{token}', function (Request $request, $token) use ($app) {
     return $app['render']($request, 'deleted.html.twig',
     [
         'deleted' => (bool) $image,
-        'image' => $image
+        'image' => $image,
+        'nocss' => $request->query->has('beurk') ? 'beurk' : ($request->query->has('nocss') ? 'nocss' : null)
     ], $image != null ? 200 : 404);
 })
 ->bind('delete');

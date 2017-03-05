@@ -16,7 +16,14 @@
 }
 
 html {
+    width: 100%;
+    max-height: 500%;
+    height: 100%;
+}
+
+body {
     display: flex;
+    flex-direction: column;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1.2em;
     color: #222;
@@ -27,7 +34,23 @@ html {
     text-align: center;
 }
 
-body {
+header {
+    display: block;
+    position: absolute;
+    right: 0;
+    font-size: 14px;
+    order: 1;
+    text-align: right;
+}
+
+header a {
+    color: #2a640f;
+    padding: .5em;
+    display: inline-block;
+    float: right;
+}
+
+#main-content {
     display: flex;
     flex-direction: column;
     border: solid 1px #2a640f;
@@ -36,13 +59,14 @@ body {
     margin:auto;
     width: 800px;
     text-align: left;
+    order: 2;
 }
 
 body.js.preload * {
     transition: none !important;
 }
 
-body#upload_page {
+body#upload_page #main-content{
     min-height: 90%;
 }
 
@@ -118,14 +142,7 @@ h2 {
     box-shadow: 0 0 7px rgba(0,0,0,.2), 2px 2px 5px rgba(0,0,0,.2);
     color: #cb1313;
     border-radius: 5px;
-    margin-bottom: 0;/*
-    text-align: center;
-    padding: .5em 2em;
-    color: #cb1313;
-    color: white;
-    background: #cb1313;
-    margin-top: -5px;
-    margin-bottom: 0;*/
+    margin-bottom: 0;
 }
 
 .warning:before, .warning:after {
@@ -159,12 +176,12 @@ h2 {
     cursor: cell;
 }
 
-.linkblock pre::-webkit-scrollbar, .linkblock pre::scrollbar {
+.linkblock pre::-webkit-scrollbar {
     width: 10px;
     background: rgba(0, 0, 0, 0.1);
 }
 
-.linkblock pre::-webkit-scrollbar-thumb, .linkblock pre::scrollbar-thumb {
+.linkblock pre::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.2);
 }
 
@@ -179,7 +196,7 @@ h2 {
 
 .linkblock button {
     position: relative;
-    font-family: 'izcraft';
+    font-family: 'izcraft', sans-serif;
     margin-left: auto;
     align-self: stretch;
     border: 0;
@@ -415,7 +432,7 @@ input[type="checkbox"] + label {
 }
 
 input[type="checkbox"] + label:before {
-    font-family: 'izcraft';
+    font-family: 'izcraft', sans-serif;
     text-align: center;
     display: inline-block;
     content: "✔";
@@ -423,8 +440,7 @@ input[type="checkbox"] + label:before {
     width: 1em;
     float: left;
     height: 1em;
-    padding: .1em;
-    padding-bottom: .15em;
+    padding: .1em .1em .15em;
     border: solid 1px #2a640f;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0,0,0,0.2) inset, 0 0 3px rgba(0,0,0,.1), 1px 1px 2px rgba(0,0,0,.2);
@@ -525,7 +541,7 @@ input[type="submit"].invalid {
     background: white;
     color: #3f9718;
     border-color: #3f9718 !important;
-    font-family: izcraft;
+    font-family: izcraft, sans-serif;
 }
 
 #closeButton {
@@ -581,11 +597,15 @@ fieldset {
 }
 
 @media (max-width: 800px), (max-height: 600px) {
-    body {
+    #main-content {
         margin: 0;
         box-shadow: none;
         border: 0;
         width: 100%;
+        height: 100%;
+    }
+    header {
+        display: none;
     }
     h1 {
         padding: .5em 0 .4em 0;
@@ -641,7 +661,6 @@ fieldset {
         align-self: stretch;
         text-align: center;
         padding: .7em 24px .5em 48px;
-        color: #cb1313;
         color: white;
         background: #cb1313;
         margin-top: -5px;
@@ -653,8 +672,7 @@ fieldset {
     }
 
     #file {
-        margin: .25em;
-        margin-bottom: 0;
+        margin: .25em .25em 0;
         padding-bottom: .25em;
     }
 
@@ -704,8 +722,7 @@ fieldset {
         content: "Options";
         background: #3f9718;
         color: white;
-        padding: .5em;
-        padding-top: .6em;
+        padding: .6em .5em .5em;
         font-size: 1.5em;
         text-align: center;
         letter-spacing: .05em;
@@ -726,8 +743,7 @@ fieldset {
         visibility: hidden;
         opacity: 0;
         transform: translateX(-100%);
-        transition: all .3s ease-in-out;
-        transition: visibility 0 linear;
+        transition: all .3s ease-in-out, visibility 0s linear;
     }
 
     body.js #options.visible {
@@ -749,5 +765,4 @@ fieldset {
         visibility: hidden;
         transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
     }
-
 }
