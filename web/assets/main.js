@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 fileNameInfo.innerHTML = "";
                 if(fileInput.files && fileInput.files[0]) {
                     var selectedFile = fileInput.files[0];
-                    var maxFileSize = parseInt(fileInput.dataset.maxsize);
+                    var maxFileSize = parseInt(fileInput.getAttribute('data-maxsize'));
 
                     validFileSize = selectedFile.size <= maxFileSize;
                     validFileType = selectedFile.type.substr(0, 6) == "image/";

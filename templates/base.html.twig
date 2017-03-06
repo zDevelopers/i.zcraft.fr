@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="shortcut icon" href="{{ global.request.basepath }}/assets/favicon.ico" type="image/x-icon" />
-    {% if not nocss %}<link href="{{ global.request.basepath }}/assets/style.css" rel="stylesheet" /> {% endif %}
+    {% if not nocss %}
+        <link href="{{ global.request.basepath }}/assets/style.css" rel="stylesheet" />
+    {% endif %}
 
     <title>{% block document_title %}Hébergeur d'images !{% endblock %}</title>
 </head>
