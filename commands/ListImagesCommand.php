@@ -60,7 +60,7 @@ class ListImagesCommand extends \Knp\Command\Command
         $this->filter($filter_names, 'original_name', $where_clauses, $parameters);
         $this->filter($filter_ips, 'uploaded_by', $where_clauses, $parameters);
 
-        $q = $db->prepare('SELECT * FROM images' . (!empty($where_clauses) ? ' WHERE ' . implode(' AND ', $where_clauses) : ''));
+        $q = $db->prepare('SELECT *, CASE WHEN LENGTH(original_name) > 48 THEN (SUBSTR(original_name, 1, 45) || "...") ELSE original_name END AS original_name FROM images' . (!empty($where_clauses) ? ' WHERE ' . implode(' AND ', $where_clauses) : ''));
         $q->execute($parameters);
 
         $total_size = 0;
