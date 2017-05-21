@@ -416,6 +416,7 @@ body.dragging #file {
     width: 100%; height: 100%;
     opacity: 0;
     font-size: 9999em; /* IE Fix */
+    overflow: hidden;
     border-radius: 45px;
     cursor: pointer;
     z-index: 1000;
@@ -423,7 +424,7 @@ body.dragging #file {
 
 label .description {
     display: block;
-    margin-left: 3.5em;
+    margin-left: 42px;
     font-size: .7em;
     color: #666;
 }
